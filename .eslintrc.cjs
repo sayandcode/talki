@@ -4,6 +4,13 @@ module.exports = {
     es2021: true,
     node: true,
   },
+  settings: {
+    "import/resolver": {
+      typescript: {
+        project: ["packages/tsconfig.json"],
+      },
+    },
+  },
   extends: [
     "airbnb-base",
     "plugin:astro/recommended",
