@@ -1,9 +1,50 @@
 ---
-import Layout from "src/layouts/Layout.astro";
+import Layout from "src/layouts/BasicHTMLLayout.astro";
 ---
 
-<Layout title="Talki: Free walkie-talkie chat">
-  <main class="h-screen bg-talki-green-400">
+<Layout title="Talki: Free walkie talkie chat">
+  <main
+    class="h-screen bg-talki-green-400 flex flex-col justify-center items-center gap-y-4"
+  >
     <h1 class="font-sans text-6xl font-bold">Talki</h1>
+    <form id="join-room-form" class="flex flex-col gap-y-4 items-center">
+      <label for="roomId-input" class="sr-only">Enter room I.D.</label>
+      <input
+        id="roomId-input"
+        name="roomId"
+        class="text-center focus-visible:outline-talki-green-700 text-2xl font-mono py-1 rounded"
+        placeholder="Eg. sdfjlsdo"
+      />
+      <button
+        type="submit"
+        class="bg-gray-50 active:bg-gray-400 hover:bg-gray-200 px-2 py-1 rounded font-mono"
+        >Join existing room</button
+      >
+    </form>
+    <div class="font-sans">or</div>
+    <a
+      href="/room"
+      class="bg-gray-50 active:bg-gray-400 hover:bg-gray-200 px-2 py-1 rounded font-mono"
+      >Create new Chat Room</a
+    >
   </main>
 </Layout>
+<script>
+  const joinRoomForm = document.getElementById(
+    "join-room-form"
+    // eslint-disable-next-line prettier/prettier
+  ) as HTMLFormElement;
+
+  const joinRoom = (e: SubmitEvent) => {
+    e.preventDefault();
+    const formValues = new FormData(joinRoomForm);
+    const roomId = formValues.get("roomId");
+    if (typeof roomId !== "string")
+      throw new Error("Couldn't get roomId from form");
+
+    const searchParams = new URLSearchParams({ roomId });
+    window.location.href = `room/?${searchParams}`;
+  };
+
+  joinRoomForm?.addEventListener("submit", joinRoom);
+</script>
