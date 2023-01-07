@@ -1,9 +1,10 @@
 import express from "express";
+import setupMiddleware from "utils/setupMiddleware";
+import setupRoutes from "utils/setupRoutes";
 
 const app = express();
 
-app.get("/", (_, res) => {
-  res.send("HomePage");
-});
+setupMiddleware(app);
+setupRoutes(app);
 
-app.listen(3001, () => console.log("listening on 3001"));
+app.listen(8080, () => console.log("listening on 8080"));

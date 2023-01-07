@@ -1,2 +1,7 @@
 dist/
 node_modules
+.env-cmdrc
+
+# development
+*.dev/
+*.dev.*

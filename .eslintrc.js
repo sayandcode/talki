@@ -15,5 +15,7 @@ module.exports = {
     project: "./tsconfig.eslint.json",
   },
   plugins: ["@typescript-eslint", "prettier"],
-  rules: {},
+  rules: {
+    "@typescript-eslint/no-use-before-define": ["error", { functions: false }],
+  },
 };
