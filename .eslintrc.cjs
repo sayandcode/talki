@@ -24,6 +24,7 @@ module.exports = {
   plugins: ["@typescript-eslint", "prettier"],
   rules: {
     "prettier/prettier": "error",
+    "no-use-before-define": ["error", { functions: false }],
   },
   overrides: [
     {

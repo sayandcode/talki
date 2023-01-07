@@ -1,0 +1,37 @@
+<form
+  id="anon-sign-in-form"
+  class="flex flex-col items-center border-2 border-gray-200 rounded-md px-3 md:px-12 py-5"
+>
+  <label for="anon-username-input" class="text-sm text-gray-700 self-start mb-1"
+    >Enter temporary username</label
+  >
+  <input
+    id="anon-username-input"
+    name="username"
+    type="text"
+    placeholder="Russ Hanneman"
+    class="border-2 px-2 mb-3"
+  />
+  <button
+    type="submit"
+    class="bg-talki-green-200 focus-visible:bg-talki-green-800 hover:bg-talki-green-800 text-black focus-visible:text-white hover:text-white px-4 py-1 rounded-3xl focus-visible:rounded-none hover:rounded-none transition-[border-radius,color,background-color]"
+    >Start using</button
+  >
+</form>
+<script>
+  const anonSignInForm = document.getElementById(
+    "anon-sign-in-form"
+    // eslint-disable-next-line prettier/prettier
+  ) as HTMLFormElement;
+
+  function handleSubmit(e: SubmitEvent) {
+    e.preventDefault();
+    const formData = new FormData(anonSignInForm);
+    const username = formData.get("username");
+
+    // todo: link this to backend
+    console.log(`Using temporary username: ${username}`);
+  }
+
+  anonSignInForm.addEventListener("submit", handleSubmit);
+</script>
