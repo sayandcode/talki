@@ -1,5 +1,5 @@
 ---
-import Layout from "@layouts/BasicHTMLLayout.astro";
+import Layout from "layouts/BasicHTMLLayout.astro";
 ---
 
 <Layout title="Talki: Free walkie talkie chat">
@@ -41,7 +41,7 @@ import Layout from "@layouts/BasicHTMLLayout.astro";
       throw new Error("Couldn't get roomId from form");
 
     const searchParams = new URLSearchParams({ roomId });
-    window.location.href = `room/?${searchParams}`;
+    window.location.href = `room?${searchParams}`;
   };
 
   joinRoomForm?.addEventListener("submit", joinRoom);
