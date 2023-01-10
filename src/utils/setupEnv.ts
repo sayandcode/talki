@@ -1,5 +1,11 @@
-const { SESSION_SECRET } = process.env;
-const APP_ENV_VARS = { SESSION_SECRET };
+const { SESSION_SECRET, FRONTEND_URL, BACKEND_URL } = process.env;
+
+const APP_ENV_VARS = {
+  SESSION_SECRET,
+  FRONTEND_URL,
+  BACKEND_URL,
+};
+
 if (!getIsEnvValid(APP_ENV_VARS))
   throw new Error("Env variables not set correctly");
 
