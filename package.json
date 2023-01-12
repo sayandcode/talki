@@ -33,6 +33,9 @@
     "cors": "^2.8.5",
     "env-cmd": "^10.1.0",
     "express": "^4.18.2",
-    "express-session": "^1.17.3"
+    "express-session": "^1.17.3",
+    "google-auth-library": "^8.7.0",
+    "zod": "^3.20.2",
+    "zod-validation-error": "^0.3.0"
   }
 }
