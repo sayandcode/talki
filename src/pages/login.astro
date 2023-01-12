@@ -1,0 +1,25 @@
+---
+import AnonymousSignInForm from "components/auth/AnonymousSignInForm.astro";
+import GoogleSignInBtn from "components/auth/GoogleSignInBtn.astro";
+import BasicHTMLLayout from "layouts/BasicHTMLLayout.astro";
+---
+
+<BasicHTMLLayout title="Login to use Talki">
+  <div class="flex justify-center items-center h-screen bg-black bg-opacity-20">
+    <div class="font-mono bg-white p-4 md:p-6">
+      <h2 class="text-center font-semibold text-2xl md:text-3xl mb-4">
+        Login to use Talki
+      </h2>
+      <div class="flex flex-col gap-y-2 items-center">
+        <AnonymousSignInForm />
+        <div class="font-bold">or</div>
+        <GoogleSignInBtn />
+      </div>
+    </div>
+  </div>
+</BasicHTMLLayout>
+<script>
+  import { redirectIfLoggedIn } from "utils/functions/redirects";
+
+  redirectIfLoggedIn("/");
+</script>

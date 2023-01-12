@@ -1,9 +1,10 @@
 export default function loadEnv() {
-  const { ENV } = process.env;
+  const { ENV, BACKEND_URL } = process.env;
+  const envVars = { ENV, BACKEND_URL };
 
-  const isEnvVarsValid = !!ENV;
+  const isEnvVarsValid = Object.values(envVars).every((val) => !!val);
   if (!isEnvVarsValid)
     throw new Error("Env variables are not defined correctly in .env-cmdrc");
 
-  return { ENV };
+  return envVars;
 }

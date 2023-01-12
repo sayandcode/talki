@@ -25,6 +25,13 @@ module.exports = {
   rules: {
     "prettier/prettier": "error",
     "no-use-before-define": ["error", { functions: false }],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        ts: "never",
+      },
+    ],
   },
   overrides: [
     {

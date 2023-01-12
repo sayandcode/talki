@@ -1,45 +1,14 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
+<div id="google-btn-container"></div>
 <div
-  id="g_id_onload"
-  data-client_id="869139706866-g4dpbda2bo7gi6bj4g5jlvq46h1q26ba.apps.googleusercontent.com"
-  data-context="signin"
-  data-ux_mode="popup"
-  data-callback="sendTokenToBackend"
-  data-auto_prompt="false"
->
-</div>
-<div
-  class="g_id_signin"
-  data-type="standard"
-  data-shape="rectangular"
-  data-theme="outline"
-  data-text="continue_with"
-  data-size="large"
-  data-logo_alignment="left"
-  data-width="200"
+  id="google-sign-in-error"
+  class="mt-2 text-red-400 font-bold text-xl hidden"
 >
 </div>
 
 <script>
-  // eslint-disable-next-line prettier/prettier
-  declare global {
-    // eslint-disable-next-line no-unused-vars
-    interface Window {
-      sendTokenToBackend: typeof sendTokenToBackend;
-    }
-  }
+  import initializeGoogleSignIn from "scripts/components/auth/GoogleSignInBtn/google";
 
-  type GoogleSignInCallbackArgs = {
-    clientId: string;
-    credential: string;
-  };
-
-  function sendTokenToBackend({
-    clientId,
-    credential,
-  }: GoogleSignInCallbackArgs) {
-    console.log("Sending token to backend macha", { clientId, credential });
-  }
-  window.sendTokenToBackend = sendTokenToBackend;
+  window.onload = initializeGoogleSignIn;
 </script>
