@@ -1,8 +1,12 @@
+---
+import { GOOGLE_SIGN_IN_ERROR_DIV_ID } from "scripts/components/auth/GoogleSignInBtn/errors";
+---
+
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <div id="google-btn-container"></div>
 <div
-  id="google-sign-in-error"
+  id={GOOGLE_SIGN_IN_ERROR_DIV_ID}
   class="mt-2 text-red-400 font-bold text-xl hidden"
 >
 </div>
