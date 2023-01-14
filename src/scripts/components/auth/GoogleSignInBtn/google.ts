@@ -3,6 +3,8 @@ import toggleError from "./errors";
 
 declare const google: any;
 
+const NONCE_TIMEOUT = 1000 * 60 * 2; // 2 min
+
 function initializeGoogleSignIn() {
   const googleClientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID;
   const isIdValid = !!googleClientId && typeof googleClientId === "string";
@@ -25,14 +27,19 @@ function initializeGoogleSignIn() {
     width: 250,
   };
 
-  getNonce()
-    .then((nonce) => {
-      google.accounts.id.initialize({ ...googleInitOptions, nonce });
-      google.accounts.id.renderButton(googleBtnContainer, googleBtnOptions);
-    })
-    .catch(() =>
-      toggleError(true, "Something went wrong. Try refreshing the page")
-    );
+  setupLoginFlow();
+  setInterval(setupLoginFlow, NONCE_TIMEOUT);
+
+  function setupLoginFlow() {
+    getNonce()
+      .then((nonce) => {
+        google.accounts.id.initialize({ ...googleInitOptions, nonce });
+        google.accounts.id.renderButton(googleBtnContainer, googleBtnOptions);
+      })
+      .catch(() =>
+        toggleError(true, "Something went wrong. Try refreshing the page")
+      );
+  }
 }
 
 export default initializeGoogleSignIn;

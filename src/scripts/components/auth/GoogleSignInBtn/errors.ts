@@ -1,9 +1,13 @@
-function toggleGoogleSignInError(isShown: boolean, msg?: string) {
-  const errorDiv = document.getElementById("google-sign-in-error");
-  if (!errorDiv) throw new Error("Couldn't find google sign in error div");
+import toggleErrorDiv from "utils/functions/errors";
 
-  errorDiv.textContent = msg || "";
-  errorDiv.style.display = isShown ? "block" : "hidden";
+const GOOGLE_SIGN_IN_ERROR_DIV_ID = "google-sign-in-error";
+
+function toggleGoogleSignInError(
+  ...[isShown, msg]: [isShown: false] | [isShown: true, msg: string]
+) {
+  const id = GOOGLE_SIGN_IN_ERROR_DIV_ID;
+  toggleErrorDiv(isShown ? { id, isShown, msg } : { id, isShown });
 }
 
 export default toggleGoogleSignInError;
+export { GOOGLE_SIGN_IN_ERROR_DIV_ID };
