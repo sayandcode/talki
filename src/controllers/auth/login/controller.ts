@@ -24,21 +24,32 @@ const authLoginController: RequestHandler = async (req, res, next) => {
     return;
   }
 
-  const processedResult = await processBody({
+  if (!req.session.nonce) {
+    next(new ApiError(400, "Denied due to suspected replay attack"));
+    return;
+  }
+  const loginAttemptResult = await processBody({
     parsedBody: bodyParseResult.data,
     sessionId: req.sessionID,
     nonce: req.session.nonce,
   });
 
-  req.session.nonce = null; // reset the nonce regardless of success/failure
-  if (!processedResult.success) {
-    next(processedResult.error);
+  if (!loginAttemptResult.success) {
+    next(loginAttemptResult.error);
     return;
   }
-  req.session.userData = processedResult.userData;
 
-  res.status(200).json({
-    msg: `Successfully logged in as ${req.session.userData.username}`,
+  // make a new session on successful login
+  req.session.regenerate((regenErr) => {
+    if (regenErr) {
+      next(regenErr);
+      return;
+    }
+
+    req.session.userData = loginAttemptResult.userData;
+    res.status(200).json({
+      msg: `Successfully logged in as ${req.session.userData.username}`,
+    });
   });
 };
 

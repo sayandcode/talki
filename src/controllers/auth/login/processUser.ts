@@ -1,6 +1,5 @@
 import { Request } from "express";
 import { SessionData } from "express-session";
-import { ApiError } from "middleware/errors";
 import verifyGoogleIdToken from "services/auth/google";
 
 type ProcessedResult =
@@ -23,12 +22,6 @@ async function processGoogleUser(
   idToken: Parameters<typeof verifyGoogleIdToken>[0]["idToken"],
   nonce: SessionData["nonce"]
 ): Promise<ProcessedResult> {
-  if (!nonce)
-    return {
-      success: false,
-      error: new ApiError(400, "Denied due to suspected replay attack"),
-    };
-
   const verificationResult = await verifyGoogleIdToken({ idToken, nonce });
   if (!verificationResult.success)
     return { success: false, error: verificationResult.error };

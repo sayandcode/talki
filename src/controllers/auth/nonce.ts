@@ -6,7 +6,7 @@ const HEX_BYTE_LENGTH = 2;
 
 declare module "express-session" {
   interface SessionData {
-    nonce: string | null | undefined;
+    nonce: string;
   }
 }
 
@@ -15,6 +15,7 @@ const authNonceController: RequestHandler = (req, res) => {
     .randomBytes(NONCE_HEX_LENGTH / HEX_BYTE_LENGTH)
     .toString("hex");
   req.session.nonce = nonce;
+  req.session.cookie.maxAge = 1000 * 60 * 2; // 2 min
   res.status(200).json({ nonce });
 };
 
