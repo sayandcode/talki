@@ -25,7 +25,7 @@ async function verifyGoogleIdToken({
   nonce: requiredNonce,
 }: {
   idToken: string;
-  nonce: NonNullable<SessionData["nonce"]>;
+  nonce: SessionData["nonce"];
 }): Promise<AwaitedReturnValue> {
   const ticket = await client.verifyIdToken({ idToken, audience: clientId });
   const payload = ticket.getPayload();

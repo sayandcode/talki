@@ -9,4 +9,5 @@ setupMiddleware(app);
 setupRoutes(app);
 setupErrorHandlers(app);
 
+// eslint-disable-next-line no-console
 app.listen(8080, () => console.log("listening on 8080"));

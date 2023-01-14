@@ -21,13 +21,12 @@ function processAnonUser(
 
 async function processGoogleUser(
   idToken: Parameters<typeof verifyGoogleIdToken>[0]["idToken"],
-  nonce: SessionData["nonce"]
+  nonce: Request["session"]["nonce"]
 ): Promise<ProcessedResult> {
-  if (!nonce)
-    return {
-      success: false,
-      error: new ApiError(400, "Denied due to suspected replay attack"),
-    };
+  if (!nonce) {
+    const error = new ApiError(400, "Denied due to suspected replay attack");
+    return { success: false, error };
+  }
 
   const verificationResult = await verifyGoogleIdToken({ idToken, nonce });
   if (!verificationResult.success)
