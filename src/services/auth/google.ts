@@ -1,4 +1,4 @@
-import { NONCE_HEX_LENGTH } from "controllers/auth/nonce";
+import { Nonce, NONCE_HEX_LENGTH } from "controllers/auth/nonce/generateNonce";
 import { SessionData } from "express-session";
 import { OAuth2Client, TokenPayload } from "google-auth-library";
 import { ApiError } from "middleware/errors";
@@ -18,14 +18,14 @@ const PayloadSchema = z.object({
 
 type AwaitedReturnValue =
   | { success: true; userData: SessionData["userData"] }
-  | { success: false; error: any };
+  | { success: false; error: ApiError | Error };
 
 async function verifyGoogleIdToken({
   idToken,
   nonce: requiredNonce,
 }: {
   idToken: string;
-  nonce: SessionData["nonce"];
+  nonce: Nonce;
 }): Promise<AwaitedReturnValue> {
   const ticket = await client.verifyIdToken({ idToken, audience: clientId });
   const payload = ticket.getPayload();

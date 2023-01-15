@@ -3,6 +3,7 @@ import { ApiError } from "middleware/errors";
 import { fromZodError } from "zod-validation-error";
 import AuthLoginBodyValidator from "./validators";
 import processBody from "./processBody";
+import { COOKIE_NONCE_ID_KEY } from "../nonce/controller";
 
 type UserData = {
   userId: string;
@@ -26,8 +27,7 @@ const authLoginController: RequestHandler = async (req, res, next) => {
 
   const loginAttemptResult = await processBody({
     parsedBody: bodyParseResult.data,
-    sessionId: req.sessionID,
-    nonce: req.session.nonce,
+    req,
   });
 
   if (!loginAttemptResult.success) {
@@ -43,6 +43,7 @@ const authLoginController: RequestHandler = async (req, res, next) => {
     }
 
     req.session.userData = loginAttemptResult.userData;
+    res.clearCookie(COOKIE_NONCE_ID_KEY);
     res.status(200).json({
       msg: `Successfully logged in as ${req.session.userData.username}`,
     });

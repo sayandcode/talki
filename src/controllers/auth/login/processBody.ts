@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Request } from "express";
 import { ApiError } from "middleware/errors";
 import { processAnonUser, processGoogleUser } from "./processUser";
 import AuthLoginBodyValidator from "./validators";
@@ -9,21 +10,19 @@ type ProcessAuthLoginBodyReturnType = Promise<
 
 async function processAuthLoginBody({
   parsedBody,
-  sessionId,
-  nonce,
+  req,
 }: {
   parsedBody: z.infer<typeof AuthLoginBodyValidator>;
-  sessionId: Parameters<typeof processAnonUser>[1];
-  nonce: Parameters<typeof processGoogleUser>[1];
+  req: Request;
 }): ProcessAuthLoginBodyReturnType {
   switch (parsedBody.type) {
     case "anon": {
       const { name } = parsedBody;
-      return processAnonUser(name, sessionId);
+      return processAnonUser(name, req.sessionID);
     }
     case "google": {
       const { idToken } = parsedBody;
-      return processGoogleUser(idToken, nonce);
+      return processGoogleUser(idToken, req.headers.cookie);
     }
     default:
       return {
