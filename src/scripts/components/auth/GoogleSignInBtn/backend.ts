@@ -1,4 +1,4 @@
-import { resumeUserJourney } from "scripts/components/pages/login";
+import { resumeUserJourney } from "scripts/pages/login";
 import authLoginEndpoint, {
   AuthLoginEndpoint,
 } from "utils/endpoints/auth/login";
