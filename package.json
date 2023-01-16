@@ -8,7 +8,8 @@
     "ci": "rimraf node_modules/ && yarn install --frozen-lockfile",
     "dev": "env-cmd -e development nodemon -x ts-node src/index.ts",
     "build": "rimraf dist && tsc && tsc-alias",
-    "start": "env-cmd -e production node dist/index.js"
+    "start": "env-cmd -e production node dist/index.js",
+    "lint": "eslint . --ignore-path .gitignore"
   },
   "devDependencies": {
     "@types/connect-redis": "^0.0.19",
