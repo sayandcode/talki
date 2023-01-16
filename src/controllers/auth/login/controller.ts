@@ -30,8 +30,8 @@ const authLoginController: RequestHandler = async (req, res, next) => {
     req,
   });
 
-  if (!loginAttemptResult.success) {
-    next(loginAttemptResult.error);
+  if (loginAttemptResult instanceof ApiError) {
+    next(loginAttemptResult);
     return;
   }
 
@@ -42,7 +42,7 @@ const authLoginController: RequestHandler = async (req, res, next) => {
       return;
     }
 
-    req.session.userData = loginAttemptResult.userData;
+    req.session.userData = loginAttemptResult;
     res.clearCookie(COOKIE_NONCE_ID_KEY);
     res.status(200).json({
       msg: `Successfully logged in as ${req.session.userData.username}`,

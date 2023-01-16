@@ -1,12 +1,7 @@
 import { z } from "zod";
 import { Request } from "express";
-import { ApiError } from "middleware/errors";
 import { processAnonUser, processGoogleUser } from "./processUser";
 import AuthLoginBodyValidator from "./validators";
-
-type ProcessAuthLoginBodyReturnType = Promise<
-  ReturnType<typeof processAnonUser> | ReturnType<typeof processGoogleUser>
->;
 
 async function processAuthLoginBody({
   parsedBody,
@@ -14,7 +9,7 @@ async function processAuthLoginBody({
 }: {
   parsedBody: z.infer<typeof AuthLoginBodyValidator>;
   req: Request;
-}): ProcessAuthLoginBodyReturnType {
+}) {
   switch (parsedBody.type) {
     case "anon": {
       const { name } = parsedBody;
@@ -25,10 +20,9 @@ async function processAuthLoginBody({
       return processGoogleUser(idToken, req.headers.cookie);
     }
     default:
-      return {
-        success: false,
-        error: new ApiError(400, "Invalid schema in request body"),
-      };
+      throw new Error(
+        "Something went wrong in validating request body with zod"
+      );
   }
 }
 

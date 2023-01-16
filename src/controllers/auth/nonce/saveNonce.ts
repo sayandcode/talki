@@ -13,20 +13,10 @@ function setNonceInDb({ nonceId, maxAge, nonce }: SetNonceOptionsObj) {
   return redisClient.setex(keyInRedis, ttl, nonce);
 }
 
-type AwaitedGetNonceReturnType =
-  | {
-      success: true;
-      nonce: Nonce;
-    }
-  | { success: false; error: Error };
-
-async function getNonceFromDb(
-  nonceId: NonceId
-): Promise<AwaitedGetNonceReturnType> {
+async function getNonceFromDb(nonceId: NonceId): Promise<Nonce | null> {
   const keyInRedis = getNonceKeyInRedis(nonceId);
   const nonce = await redisClient.get(keyInRedis);
-  if (!nonce) return { success: false, error: new Error("No nonce found") };
-  return { success: true, nonce };
+  return nonce;
 }
 
 async function removeNonceFromDb(nonceId: NonceId) {
