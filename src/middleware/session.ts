@@ -1,5 +1,5 @@
 import session from "express-session";
-import APP_ENV_VARS from "utils/setupEnv";
+import APP_ENV_VARS from "utils/setup/env";
 import createRedisStore from "connect-redis";
 import redisClient from "services/db/redis";
 

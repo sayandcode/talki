@@ -1,5 +1,5 @@
-import APP_ENV_VARS from "utils/setupEnv";
-import makeAsyncController from "utils/asyncController";
+import APP_ENV_VARS from "utils/setup/env";
+import makeAsyncController from "utils/reqRes/asyncController";
 import generateNonce from "./generateNonce";
 import { setNonceInDb } from "./saveNonce";
 

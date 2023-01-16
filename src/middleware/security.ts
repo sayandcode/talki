@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import cors, { CorsOptions } from "cors";
-import APP_ENV_VARS from "utils/setupEnv";
+import APP_ENV_VARS from "utils/setup/env";
 
 // cors
 const corsOptions: CorsOptions = {

@@ -1,6 +1,6 @@
 import { ApiError } from "middleware/errors";
 import { fromZodError } from "zod-validation-error";
-import makeAsyncController from "utils/asyncController";
+import makeAsyncController from "utils/reqRes/asyncController";
 import AuthLoginBodyValidator from "./validators";
 import processBody from "./processBody";
 import { COOKIE_NONCE_ID_KEY } from "../nonce/controller";

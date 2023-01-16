@@ -1,5 +1,5 @@
 import Redis from "ioredis";
-import APP_ENV_VARS from "utils/setupEnv";
+import APP_ENV_VARS from "utils/setup/env";
 
 const { REDIS_CONNECTION_URL } = APP_ENV_VARS;
 
