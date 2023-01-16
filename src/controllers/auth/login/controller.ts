@@ -1,8 +1,9 @@
-import { RequestHandler } from "express";
 import { ApiError } from "middleware/errors";
 import { fromZodError } from "zod-validation-error";
+import makeAsyncController from "utils/reqRes/asyncController";
 import AuthLoginBodyValidator from "./validators";
 import processBody from "./processBody";
+import { COOKIE_NONCE_ID_KEY } from "../nonce/controller";
 
 type UserData = {
   userId: string;
@@ -16,7 +17,7 @@ declare module "express-session" {
   }
 }
 
-const authLoginController: RequestHandler = async (req, res, next) => {
+const authLoginController = makeAsyncController(async (req, res, next) => {
   const bodyParseResult = AuthLoginBodyValidator.safeParse(req.body);
   if (!bodyParseResult.success) {
     const errMsg = fromZodError(bodyParseResult.error).message;
@@ -26,12 +27,11 @@ const authLoginController: RequestHandler = async (req, res, next) => {
 
   const loginAttemptResult = await processBody({
     parsedBody: bodyParseResult.data,
-    sessionId: req.sessionID,
-    nonce: req.session.nonce,
+    req,
   });
 
-  if (!loginAttemptResult.success) {
-    next(loginAttemptResult.error);
+  if (loginAttemptResult instanceof ApiError) {
+    next(loginAttemptResult);
     return;
   }
 
@@ -42,11 +42,12 @@ const authLoginController: RequestHandler = async (req, res, next) => {
       return;
     }
 
-    req.session.userData = loginAttemptResult.userData;
+    req.session.userData = loginAttemptResult;
+    res.clearCookie(COOKIE_NONCE_ID_KEY);
     res.status(200).json({
       msg: `Successfully logged in as ${req.session.userData.username}`,
     });
   });
-};
+});
 
 export default authLoginController;

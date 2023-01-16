@@ -17,5 +17,9 @@ module.exports = {
   plugins: ["@typescript-eslint", "prettier"],
   rules: {
     "@typescript-eslint/no-use-before-define": ["error", { functions: false }],
+    "@typescript-eslint/no-floating-promises": "error",
+    "no-return-await": "error",
+    "@typescript-eslint/require-await": "error",
+    "no-void": "off",
   },
 };
