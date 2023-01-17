@@ -1,4 +1,4 @@
-import loadEnv from "./loadEnv";
+import loadEnv from "./loadEnv.js";
 
 const { ENV, BACKEND_URL } = loadEnv();
 

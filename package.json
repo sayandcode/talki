@@ -4,10 +4,12 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "env-cmd -e development astro dev",
-    "build": "env-cmd -e production astro build",
-    "start": "env-cmd -e production astro preview",
-    "astro": "astro"
+    "ci": "yarn install --immutable --immutable-cache",
+    "dev": "ENV=development env-cmd astro dev",
+    "build": "ENV=production env-cmd astro build",
+    "start": "ENV=production env-cmd astro preview",
+    "astro": "astro",
+    "lint": "eslint . --ignore-path=.gitignore --max-warnings=0"
   },
   "dependencies": {
     "@astrojs/tailwind": "^2.1.3",

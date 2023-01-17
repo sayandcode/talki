@@ -1,0 +1,22 @@
+name: Check code quality
+on:
+  pull_request:
+    branches: [ frontend ]
+jobs:
+  check_quality:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Get code onto system
+        uses: actions/checkout@v3
+      - name: Setup node v16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: yarn
+      - name: Setup Env files
+        env:
+          MY_ENV_FILE: ${{ secrets.ENV }}
+        run: echo "$MY_ENV_FILE" > .env
+      - run: yarn ci
+      - run: yarn build
+      - run: yarn lint
