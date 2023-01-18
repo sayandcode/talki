@@ -1,6 +1,6 @@
 dist/
 node_modules
-.env-cmdrc
+.env
 
 # development
 *.dev/
