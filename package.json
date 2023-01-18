@@ -5,11 +5,11 @@
   "author": "sayandcode <sayandcode@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "ci": "rimraf node_modules/ && yarn install --frozen-lockfile",
-    "dev": "env-cmd -e development nodemon -x ts-node src/index.ts",
+    "ci": "yarn install --immutable --immutable-cache",
+    "dev": "NODE_ENV=development env-cmd nodemon -x ts-node src/index.ts",
     "build": "rimraf dist && tsc && tsc-alias",
-    "start": "env-cmd -e production node dist/index.js",
-    "lint": "eslint . --ignore-path .gitignore"
+    "start": "NODE_ENV=production env-cmd node dist/index.js",
+    "lint": "eslint . --ignore-path=.gitignore --max-warnings=0"
   },
   "devDependencies": {
     "@types/connect-redis": "^0.0.19",
