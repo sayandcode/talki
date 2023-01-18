@@ -2,6 +2,7 @@ import express from "express";
 import setupErrorHandlers from "utils/setup/app/errorHandlers";
 import setupMiddleware from "utils/setup/app/middleware";
 import setupRoutes from "utils/setup/app/routes";
+import "services/db/mongo";
 
 const app = express();
 
