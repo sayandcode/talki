@@ -14,7 +14,11 @@ const devCSPObj = {
 const prodCSPObj = {
   "default-src": "'none'",
   "img-src": "'self'",
-  "script-src": ["https://accounts.google.com/gsi/client", "'unsafe-inline'"],
+  "script-src": [
+    "https://accounts.google.com/gsi/client",
+    "'unsafe-inline'",
+    "'self'",
+  ],
   "style-src": [
     "'self'",
     "'unsafe-inline'",

@@ -2,9 +2,28 @@ import type { AuthStatusEndpoint } from "utils/endpoints/auth/status";
 import authStatusEndpoint from "utils/endpoints/auth/status";
 import backendFetch from "./backendFetch";
 
+/**
+ * @returns boolean whether or not redirection took place
+ */
 async function redirectIfLoggedIn(newUrl: string) {
   const isLoggedIn = await fetchIsLoggedIn();
-  if (isLoggedIn) window.location.href = newUrl;
+  if (isLoggedIn) {
+    window.location.href = newUrl;
+    return true;
+  }
+  return false;
+}
+
+/**
+ * @returns boolean whether or not redirection took place
+ */
+async function redirectIfNotLoggedIn(newUrl: string) {
+  const isLoggedIn = await fetchIsLoggedIn();
+  if (!isLoggedIn) {
+    window.location.href = newUrl;
+    return true;
+  }
+  return false;
 }
 
 async function fetchIsLoggedIn() {
@@ -14,5 +33,4 @@ async function fetchIsLoggedIn() {
   return isLoggedIn;
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export { redirectIfLoggedIn };
+export { redirectIfNotLoggedIn, redirectIfLoggedIn };

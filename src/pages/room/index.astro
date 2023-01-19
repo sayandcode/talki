@@ -1,0 +1,18 @@
+---
+import PushToTalkBtn from "components/room/PushToTalkBtn.astro";
+import BasicHTMLLayout from "layouts/BasicHTMLLayout.astro";
+---
+
+<BasicHTMLLayout title="My private room">
+  <div class="h-screen flex flex-col justify-center items-center">
+    <h1 class="text-4xl font-bold mb-4">My chat room</h1>
+    <PushToTalkBtn id="push-to-talk-btn" />
+  </div>
+</BasicHTMLLayout>
+<script>
+  import { redirectIfNotLoggedIn } from "utils/functions/redirects";
+  import startSession from "scripts/pages/room/startSession";
+
+  const isRedirected = await redirectIfNotLoggedIn("/login?redirectTo=/room");
+  if (!isRedirected) startSession();
+</script>

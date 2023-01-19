@@ -1,0 +1,17 @@
+---
+interface Props {
+  id: HTMLButtonElement["id"];
+}
+const { id } = Astro.props as Props;
+---
+
+<button
+  id={id}
+  class="bg-talki-black hover:bg-gray-300 focus-visible:bg-gray-300 hover:outline hover:outline-2 hover:outline-gray-500 px-4 py-2 group"
+>
+  <span
+    class="font-mono font-bold text-xl text-white group-hover:text-black group-focus-visible:text-black"
+  >
+    Push to talk</span
+  >
+</button>
