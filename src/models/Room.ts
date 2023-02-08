@@ -1,4 +1,5 @@
-import { model, Schema } from "mongoose";
+import { Schema } from "mongoose";
+import mongoClient from "services/db/mongo";
 
 const userDataSchema = new Schema(
   {
@@ -21,7 +22,7 @@ const roomSchema = new Schema({
   members: { type: Map, of: memberSchema, required: true },
 });
 
-const RoomModel = model("Room", roomSchema);
+const RoomModel = mongoClient.model("Room", roomSchema);
 
 // This is to fix a bug in mongoose that prevents type checking on constructor.
 // Having a wrapper class, provides the strict type checking.
