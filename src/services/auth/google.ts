@@ -1,4 +1,4 @@
-import { Nonce, NONCE_HEX_LENGTH } from "controllers/auth/nonce/generateNonce";
+import { Nonce, NONCE_HEX_LENGTH } from "utils/generateNonce";
 import { SessionData } from "express-session";
 import { OAuth2Client, TokenPayload } from "google-auth-library";
 import APP_ENV_VARS from "utils/setup/env";

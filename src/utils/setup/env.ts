@@ -5,6 +5,7 @@ const {
   BACKEND_URL,
   REDIS_CONNECTION_URL,
   MONGODB_CONNECTION_URL,
+  ROOM_WS_URL,
 } = process.env;
 
 const APP_ENV_VARS = {
@@ -14,6 +15,7 @@ const APP_ENV_VARS = {
   BACKEND_URL,
   REDIS_CONNECTION_URL,
   MONGODB_CONNECTION_URL,
+  ROOM_WS_URL,
 };
 
 if (!getIsEnvValid(APP_ENV_VARS))

@@ -1,5 +1,5 @@
 import { Redis } from "ioredis";
-import { Nonce, NonceId } from "./generateNonce";
+import { Nonce, NonceId } from "utils/generateNonce";
 
 type SetNonceOptionsObj = {
   nonceId: NonceId;

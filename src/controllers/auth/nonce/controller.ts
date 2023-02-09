@@ -1,7 +1,7 @@
 import APP_ENV_VARS from "utils/setup/env";
 import makeAsyncController from "utils/reqRes/asyncController";
 import DatabaseClients from "services/db";
-import generateNonce from "./generateNonce";
+import generateNonce from "utils/generateNonce";
 import { setNonceInDb } from "./saveNonce";
 
 const { BACKEND_URL, FRONTEND_URL } = APP_ENV_VARS;

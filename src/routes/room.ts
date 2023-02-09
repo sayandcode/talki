@@ -5,8 +5,13 @@ import DatabaseClients from "services/db";
 
 function makeRoomRouter(databaseClients: DatabaseClients): Router {
   const roomRouter = Router();
-  const roomCreateController = makeRoomCreateController(databaseClients);
-  roomRouter.post("/create", protectWithAuth, roomCreateController);
+
+  roomRouter.post(
+    "/create",
+    protectWithAuth,
+    makeRoomCreateController(databaseClients)
+  );
+
   return roomRouter;
 }
 
