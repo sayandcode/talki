@@ -1,14 +1,15 @@
 import { Express, json, urlencoded } from "express";
 import errorMiddlewareArr from "middleware/errors";
 import securityMiddlewareArr from "middleware/security";
-import sessionMiddlewareArr from "middleware/session";
+import makeSessionMiddlewareArr from "middleware/session";
+import DatabaseClients from "services/db";
 
-function setupMiddleware(app: Express) {
+function setupMiddleware(app: Express, databaseClients: DatabaseClients) {
   app.use([
     json(),
     urlencoded({ extended: true }),
     ...securityMiddlewareArr,
-    ...sessionMiddlewareArr,
+    ...makeSessionMiddlewareArr(databaseClients),
     ...errorMiddlewareArr,
   ]);
 }

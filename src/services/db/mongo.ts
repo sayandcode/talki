@@ -3,6 +3,8 @@ import APP_ENV_VARS from "utils/setup/env";
 
 const url = APP_ENV_VARS.MONGODB_CONNECTION_URL;
 
-const mongoClient = mongoose.createConnection(url);
+function getMongoClient() {
+  return mongoose.createConnection(url);
+}
 
-export default mongoClient;
+export default getMongoClient;

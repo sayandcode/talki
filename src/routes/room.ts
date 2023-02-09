@@ -1,9 +1,13 @@
-import roomCreateController from "controllers/room/create";
+import makeRoomCreateController from "controllers/room/create";
 import { Router } from "express";
 import protectWithAuth from "middleware/protected";
+import DatabaseClients from "services/db";
 
-const roomRouter = Router();
+function makeRoomRouter(databaseClients: DatabaseClients): Router {
+  const roomRouter = Router();
+  const roomCreateController = makeRoomCreateController(databaseClients);
+  roomRouter.post("/create", protectWithAuth, roomCreateController);
+  return roomRouter;
+}
 
-roomRouter.post("/create", protectWithAuth, roomCreateController);
-
-export default roomRouter;
+export default makeRoomRouter;

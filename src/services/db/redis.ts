@@ -3,6 +3,8 @@ import APP_ENV_VARS from "utils/setup/env";
 
 const url = APP_ENV_VARS.REDIS_CONNECTION_URL;
 
-const redisClient = new Redis(url);
+function getRedisClient() {
+  return new Redis(url);
+}
 
-export default redisClient;
+export default getRedisClient;

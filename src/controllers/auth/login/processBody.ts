@@ -1,15 +1,20 @@
 import { z } from "zod";
 import { Request } from "express";
-import { processAnonUser, processGoogleUser } from "./processUser";
+import DatabaseClients from "services/db";
+import makeUserProcessors from "./processUser";
 import AuthLoginBodyValidator from "./validators";
 
 async function processAuthLoginBody({
   parsedBody,
   req,
+  databaseClients,
 }: {
   parsedBody: z.infer<typeof AuthLoginBodyValidator>;
   req: Request;
+  databaseClients: DatabaseClients;
 }) {
+  const { processAnonUser, processGoogleUser } =
+    makeUserProcessors(databaseClients);
   switch (parsedBody.type) {
     case "anon": {
       const { name } = parsedBody;

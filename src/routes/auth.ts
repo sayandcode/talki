@@ -1,12 +1,17 @@
-import authLoginController from "controllers/auth/login/controller";
-import authNonceController from "controllers/auth/nonce/controller";
+import makeAuthLoginController from "controllers/auth/login/controller";
+import makeAuthNonceController from "controllers/auth/nonce/controller";
 import authStatusController from "controllers/auth/status";
 import { Router } from "express";
+import DatabaseClients from "services/db";
 
-const authRouter = Router();
+function makeAuthRouter(databaseClients: DatabaseClients) {
+  const authRouter = Router();
 
-authRouter.get("/status", authStatusController);
-authRouter.get("/nonce", authNonceController);
-authRouter.put("/login", authLoginController);
+  authRouter.get("/status", authStatusController);
+  authRouter.get("/nonce", makeAuthNonceController(databaseClients));
+  authRouter.put("/login", makeAuthLoginController(databaseClients));
 
-export default authRouter;
+  return authRouter;
+}
+
+export default makeAuthRouter;
