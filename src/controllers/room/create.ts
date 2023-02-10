@@ -51,6 +51,7 @@ function getMemberData(userData: SessionData["userData"]) {
   const memberId = userData.userId;
   const memberData = {
     userData,
+    memberId,
     connectionId: undefined,
     nonce, // to verify identity in ws connection
     isAdmin: true, // since a new room is being created, put this user as admin

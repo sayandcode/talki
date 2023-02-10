@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import { InferSchemaType, Schema, Document } from "mongoose";
 import DatabaseClients from "services/db";
 
 const ROOM_TIMEOUT = 5 * 60; // seconds
@@ -15,6 +15,7 @@ const userDataSchema = new Schema(
 const memberSchema = new Schema(
   {
     userData: { type: userDataSchema, required: true },
+    memberId: { type: String, required: true },
     nonce: { type: String, required: false },
     connectionId: { type: String, required: false },
     isAdmin: { type: Boolean, required: true },
@@ -33,6 +34,9 @@ const roomSchema = new Schema({
   },
 });
 
+type RoomMemberSchemaType = InferSchemaType<typeof memberSchema>;
+type RoomId = string extends Document["_id"] ? string : never;
+
 function makeRoomModel(mongoClient: DatabaseClients["mongoClient"]) {
   const RoomModel = mongoClient.model("room", roomSchema);
 
@@ -43,3 +47,4 @@ function makeRoomModel(mongoClient: DatabaseClients["mongoClient"]) {
 }
 
 export default makeRoomModel;
+export type { RoomMemberSchemaType, RoomId };
