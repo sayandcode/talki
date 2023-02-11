@@ -1,4 +1,5 @@
-import makeRoomModel, { RoomDocument, RoomMemberSchemaType } from "models/Room";
+import makeRoomModel, { RoomDocument } from "models/Room/index.model";
+import { RoomMemberSchemaType } from "models/Room/schemas/member";
 import DatabaseClients from "services/db";
 import { RequiredRoomWs$connectBody } from "./bodyValidator";
 

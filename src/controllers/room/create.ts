@@ -1,4 +1,4 @@
-import makeRoomModel from "models/Room";
+import makeRoomModel from "models/Room/index.model";
 import DatabaseClients from "services/db";
 import makeAsyncController from "utils/reqRes/asyncController";
 import APP_ENV_VARS from "utils/setup/env";

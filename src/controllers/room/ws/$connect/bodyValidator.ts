@@ -1,5 +1,6 @@
 import { RoomIdValidator } from "controllers/room/_utils/validators";
-import { RoomId, RoomMemberSchemaType } from "models/Room";
+import { RoomId } from "models/Room/index.model";
+import { RoomMemberSchemaType } from "models/Room/schemas/member";
 import { z } from "zod";
 
 const RoomWs$connectBodyValidator = z.object({
