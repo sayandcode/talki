@@ -1,5 +1,5 @@
-import makeAuthLoginController from "controllers/auth/login/controller";
-import makeAuthNonceController from "controllers/auth/nonce/controller";
+import makeAuthLoginController from "controllers/auth/login/index.controller";
+import makeAuthNonceController from "controllers/auth/nonce/index.controller";
 import authStatusController from "controllers/auth/status";
 import { Router } from "express";
 import DatabaseClients from "services/db";

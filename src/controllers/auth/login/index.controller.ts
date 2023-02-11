@@ -4,7 +4,7 @@ import makeAsyncController from "utils/reqRes/asyncController";
 import DatabaseClients from "services/db";
 import AuthLoginBodyValidator from "./validators";
 import processBody from "./processBody";
-import { COOKIE_NONCE_ID_KEY } from "../nonce/controller";
+import { COOKIE_NONCE_ID_KEY } from "../nonce/index.controller";
 
 type UserData = {
   userId: string;

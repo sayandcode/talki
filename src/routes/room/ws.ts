@@ -1,4 +1,4 @@
-import makeRoomWs$connectRoute from "controllers/room/ws/$connect/controller";
+import makeRoomWs$connectRoute from "controllers/room/ws/$connect/index.controller";
 import { Router } from "express";
 import DatabaseClients from "services/db";
 

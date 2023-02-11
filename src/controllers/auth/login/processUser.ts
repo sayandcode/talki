@@ -4,7 +4,7 @@ import { ApiError } from "middleware/errors";
 import verifyGoogleIdToken from "services/auth/google";
 import DatabaseClients from "services/db";
 import getCookiesObjFromString from "utils/getCookies";
-import { COOKIE_NONCE_ID_KEY } from "../nonce/controller";
+import { COOKIE_NONCE_ID_KEY } from "../nonce/index.controller";
 import { getNonceFromDb, removeNonceFromDb } from "../nonce/saveNonce";
 
 function makeUserProcessors(databaseClients: DatabaseClients) {
