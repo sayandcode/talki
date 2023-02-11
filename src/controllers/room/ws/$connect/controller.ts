@@ -8,7 +8,7 @@ import RoomWs$connectBodyValidator, {
 import {
   findMemberAndRoom,
   switchNonceForConnectionId,
-} from "./dbManipulators";
+} from "../../_utils/dbManipulators";
 
 const NOT_FOUND_ERR_MSG = "Requested room or member doesn't exist";
 

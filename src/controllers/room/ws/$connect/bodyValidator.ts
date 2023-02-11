@@ -1,9 +1,10 @@
+import { RoomIdValidator } from "controllers/room/_utils/validators";
 import { RoomId, RoomMemberSchemaType } from "models/Room";
 import { z } from "zod";
 
 const RoomWs$connectBodyValidator = z.object({
   connectionId: z.string(),
-  roomId: z.string().length(24),
+  roomId: RoomIdValidator,
   memberId: z.string(),
   nonce: z.string(),
 });
