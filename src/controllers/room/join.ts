@@ -1,5 +1,5 @@
 import { ApiError } from "middleware/errors";
-import { RoomId } from "models/Room";
+import makeRoomModel, { RoomId } from "models/Room";
 import DatabaseClients from "services/db";
 import makeAsyncController from "utils/reqRes/asyncController";
 // import APP_ENV_VARS from "utils/setup/env";
@@ -7,7 +7,6 @@ import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import APP_ENV_VARS from "utils/setup/env";
 import { RoomIdValidator } from "./_utils/validators";
-import { findRoom, createRoomMember } from "./_utils/dbManipulators";
 import { getUserDataFromAuthedReq } from "./_utils/reqManipulators";
 
 const BodyValidator = z.object({
@@ -31,15 +30,13 @@ function makeRoomJoinController(databaseClients: DatabaseClients) {
 
     const { roomId } = bodyParseResult.data satisfies RequiredBody;
 
-    const requestedRoom = await findRoom({ roomId, databaseClients });
+    const Room = makeRoomModel(databaseClients.mongoClient);
+    const requestedRoom = await Room.findById(roomId);
     if (!requestedRoom) {
       next(new ApiError(404, "Couldn't find room"));
       return;
     }
-    const newMember = createRoomMember(userData, false);
-
-    requestedRoom.members.set(newMember.memberId, newMember);
-    await requestedRoom.save();
+    const newMember = await requestedRoom.addMember(userData, false);
 
     res.status(200).json({
       wsUrl: APP_ENV_VARS.ROOM_WS_URL,
