@@ -2,10 +2,11 @@ import { ApiError } from "middleware/errors";
 import DatabaseClients from "services/db";
 import makeAsyncController from "utils/reqRes/asyncController";
 import { fromZodError } from "zod-validation-error";
-import makeRoomModel from "models/Room";
-import RoomWs$connectBodyValidator, {
-  RequiredRoomWs$connectBody,
-} from "./bodyValidator";
+import RoomWs$connectBodyValidator from "./bodyValidator";
+import {
+  askAdminForEntryPermission,
+  attemptConnection,
+} from "./connectionHelpers";
 
 const NOT_FOUND_ERR_MSG = "Requested room or member doesn't exist";
 
@@ -18,33 +19,25 @@ function makeRoomWs$connectRoute(databaseClients: DatabaseClients) {
       return;
     }
 
-    const isConnectionSuccess = await attemptConnection(
+    const connectionAttemptResult = await attemptConnection(
       bodyParseResult.data,
       databaseClients
     );
-    if (!isConnectionSuccess) {
+    if (!connectionAttemptResult.success) {
       next(new ApiError(404, NOT_FOUND_ERR_MSG));
       return;
     }
 
+    const { requestedRoom } = connectionAttemptResult;
+    const { memberId: requestingMemberId } = bodyParseResult.data;
+    if (requestedRoom.adminMemberId !== requestingMemberId)
+      askAdminForEntryPermission({
+        requestingMemberId,
+        requestedRoom,
+      });
+
     res.status(200).send("Connection successful");
   });
-}
-
-async function attemptConnection(
-  body: RequiredRoomWs$connectBody,
-  databaseClients: DatabaseClients
-): Promise<boolean> {
-  const { nonce, roomId, memberId, connectionId } = body;
-  const Room = makeRoomModel(databaseClients.mongoClient);
-  const requestedRoom = await Room.findById(roomId);
-  return (
-    requestedRoom?.confirmConnection({
-      memberId,
-      nonce,
-      connectionId,
-    }) || false
-  );
 }
 
 export default makeRoomWs$connectRoute;

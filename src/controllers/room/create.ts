@@ -6,10 +6,10 @@ import { getUserDataFromAuthedReq } from "./_utils/reqManipulators";
 
 function makeRoomCreateController(databaseClients: DatabaseClients) {
   return makeAsyncController(async (req, res) => {
-    const userData = getUserDataFromAuthedReq(req);
+    const adminUserData = getUserDataFromAuthedReq(req);
 
     const Room = makeRoomModel(databaseClients.mongoClient);
-    const { newRoom, adminMember } = await Room.make(userData);
+    const { newRoom, adminMember } = await Room.make(adminUserData);
 
     res.status(200).json({
       wsUrl: APP_ENV_VARS.ROOM_WS_URL,

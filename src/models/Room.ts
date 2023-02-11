@@ -1,7 +1,8 @@
 import { SessionData } from "express-session";
-import { InferSchemaType, Schema, Document } from "mongoose";
+import { InferSchemaType, Schema, HydratedDocumentFromSchema } from "mongoose";
 import DatabaseClients from "services/db";
 import generateNonce from "utils/generateNonce";
+import { createMapFromObj } from "./utils/map";
 
 const ROOM_TIMEOUT = 5 * 60; // seconds
 
@@ -20,7 +21,6 @@ const memberSchema = new Schema(
     memberId: { type: String, required: true },
     nonce: { type: String, required: false },
     connectionId: { type: String, required: false },
-    isAdmin: { type: Boolean, required: true },
     isAllowedInRoom: { type: Boolean, required: true },
   },
   { _id: false }
@@ -34,6 +34,7 @@ type ConnectionId = NonNullable<RoomMemberSchemaType["connectionId"]>;
 const roomSchema = new Schema(
   {
     members: { type: Map, of: memberSchema, required: true },
+    adminMemberId: { type: String, required: true },
     expireAt: {
       type: Date,
       expires: 1,
@@ -43,20 +44,9 @@ const roomSchema = new Schema(
   },
   {
     methods: {
-      async addMember(
-        userData: SessionData["userData"],
-        isFirstMember: boolean
-      ) {
-        const memberId = userData.userId;
-        const memberData = {
-          userData,
-          memberId,
-          connectionId: undefined,
-          nonce: generateNonce().nonce, // to verify identity in ws connection
-          isAdmin: isFirstMember,
-          isAllowedInRoom: isFirstMember,
-        };
-        this.members.set(memberId, memberData);
+      async addMember(userData: SessionData["userData"]) {
+        const memberData = getMemberData(userData, false);
+        this.members.set(memberData.memberId, memberData);
         await this.save();
         return memberData;
       },
@@ -86,7 +76,8 @@ const roomSchema = new Schema(
   }
 );
 
-type RoomId = string extends Document["_id"] ? string : never;
+type RoomDocument = HydratedDocumentFromSchema<typeof roomSchema>;
+type RoomId = string extends RoomDocument["id"] ? string : never;
 
 function makeRoomModel(mongoClient: DatabaseClients["mongoClient"]) {
   const RoomModel = mongoClient.model("room", roomSchema);
@@ -95,13 +86,32 @@ function makeRoomModel(mongoClient: DatabaseClients["mongoClient"]) {
   // Having a wrapper class, provides the strict type checking.
   class Room extends RoomModel {
     static async make(adminUserData: SessionData["userData"]) {
-      const newRoom = new this({ members: new Map() });
-      const adminMember = await newRoom.addMember(adminUserData, true);
+      const adminMember = getMemberData(adminUserData, true);
+      const newRoom = new this({
+        members: createMapFromObj({
+          [adminMember.memberId]: adminMember,
+        }),
+        adminMemberId: adminMember.memberId,
+      });
+      await newRoom.save();
       return { newRoom, adminMember };
     }
   }
   return Room;
 }
 
+function getMemberData(
+  userData: SessionData["userData"],
+  isFirstMember: boolean
+) {
+  return {
+    userData,
+    memberId: userData.userId,
+    connectionId: undefined,
+    nonce: generateNonce().nonce, // to verify identity in ws connection
+    isAllowedInRoom: isFirstMember,
+  };
+}
+
 export default makeRoomModel;
-export type { RoomMemberSchemaType, RoomId };
+export type { RoomMemberSchemaType, RoomId, RoomDocument };

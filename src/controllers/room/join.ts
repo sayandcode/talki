@@ -36,7 +36,7 @@ function makeRoomJoinController(databaseClients: DatabaseClients) {
       next(new ApiError(404, "Couldn't find room"));
       return;
     }
-    const newMember = await requestedRoom.addMember(userData, false);
+    const newMember = await requestedRoom.addMember(userData);
 
     res.status(200).json({
       wsUrl: APP_ENV_VARS.ROOM_WS_URL,
