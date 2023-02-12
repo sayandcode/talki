@@ -31,7 +31,7 @@ function makeRoomWs$connectRoute(databaseClients: DatabaseClients) {
     const { requestedRoom } = connectionAttemptResult;
     const { memberId: requestingMemberId } = bodyParseResult.data;
     if (requestedRoom.adminMemberId !== requestingMemberId)
-      askAdminForEntryPermission({
+      await askAdminForEntryPermission({
         requestingMemberId,
         requestedRoom,
       });

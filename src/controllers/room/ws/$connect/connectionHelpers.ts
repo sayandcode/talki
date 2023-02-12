@@ -2,6 +2,7 @@ import makeRoomModel, { RoomDocument } from "models/Room/index.model";
 import { RoomMemberSchemaType } from "models/Room/schemas/member";
 import DatabaseClients from "services/db";
 import { RequiredRoomWs$connectBody } from "./bodyValidator";
+import wsBackend from "./_utils/wsBackend";
 
 type ConnectionAttempResult = Promise<
   { success: false } | { success: true; requestedRoom: RoomDocument }
@@ -26,7 +27,7 @@ async function attemptConnection(
   return { success: true, requestedRoom };
 }
 
-function askAdminForEntryPermission({
+async function askAdminForEntryPermission({
   requestingMemberId,
   requestedRoom,
 }: {
@@ -38,8 +39,21 @@ function askAdminForEntryPermission({
     throw new Error("Cannot add admin as a new member to room");
   const requestingMember = requestedRoom.members.get(requestingMemberId);
   const adminMember = requestedRoom.members.get(adminMemberId);
+  if (!(requestingMember && adminMember))
+    throw new Error("Room doesn't have either admin or new member");
 
-  // TODO: send a request to admin's connectionId
+  const msg = {
+    action: "allowMemberInRoom",
+    payload: {
+      newMemberId: requestingMemberId,
+      userData: requestingMember.userData,
+    },
+  };
+
+  if (!adminMember.connectionId)
+    throw new Error("Admin member doesn't have connectionId yet");
+  await wsBackend.sendMsgToWs(adminMember.connectionId, msg);
+
   return { requestingMember, adminMember };
 }
 

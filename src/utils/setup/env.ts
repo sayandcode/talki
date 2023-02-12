@@ -1,4 +1,5 @@
 const {
+  NODE_ENV,
   SESSION_SECRET,
   FRONTEND_URL,
   GOOGLE_CLIENT_ID,
@@ -9,6 +10,7 @@ const {
 } = process.env;
 
 const APP_ENV_VARS = {
+  NODE_ENV,
   SESSION_SECRET,
   FRONTEND_URL,
   GOOGLE_CLIENT_ID,
