@@ -13,7 +13,7 @@
     "baseUrl": "./src", /* Specify the base directory to resolve non-relative module names. */
     "paths": {}, /* Specify a set of entries that re-map imports to additional lookup locations. */
     /* Emit */
-    "outDir": "./dist", /* Specify an output folder for all emitted files. */
+    // "outDir": "./dist", /* Specify an output folder for all emitted files. */
     /* Interop Constraints */
     "esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
     "forceConsistentCasingInFileNames": true, /* Ensure that casing is correct in imports. */
@@ -39,5 +39,8 @@
     "allowUnreachableCode": true, /* Disable error reporting for unreachable code. */
     /* Completeness */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
-  }
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
 }
