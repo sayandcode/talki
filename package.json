@@ -13,7 +13,7 @@
     "start:dev": "NODE_ENV=production env-cmd node dist/index.development.js",
     "lint": "eslint . --ignore-path=.gitignore --max-warnings=0",
     "deploy": "NODE_ENV=production bash devOps/deploy.sh",
-    "undeploy": "bash devOps/undeploy.sh",
+    "undeploy": "NODE_ENV=production bash devOps/undeploy.sh",
     "diff": "NODE_ENV=production bash devOps/diff.sh"
   },
   "devDependencies": {
