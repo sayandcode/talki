@@ -1,6 +1,8 @@
 import { SessionData } from "express-session";
-import { HydratedDocumentFromSchema } from "mongoose";
-import DatabaseClients from "services/db";
+import {
+  HydratedDocumentFromSchema,
+  Connection as MongooseConnection,
+} from "mongoose";
 import { createMapFromObj } from "../utils/map";
 import { getRoomMemberData } from "./schemas/member";
 import roomSchema from "./schemas/room";
@@ -8,7 +10,7 @@ import roomSchema from "./schemas/room";
 type RoomDocument = HydratedDocumentFromSchema<typeof roomSchema>;
 type RoomId = string extends RoomDocument["id"] ? string : never;
 
-function makeRoomModel(mongoClient: DatabaseClients["mongoClient"]) {
+function makeRoomModel(mongoClient: MongooseConnection) {
   const RoomModel = mongoClient.model("room", roomSchema);
 
   // This is to fix a bug in mongoose that prevents type checking on constructor.

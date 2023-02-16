@@ -12,7 +12,7 @@ class InfraStack extends cdk.Stack {
 
     /* CREATE RESOURCES */
     /* Lambda */
-    const lambda = new BackendLambda(this, "expressBackend");
+    const appLambda = new BackendLambda(this, "expressBackend");
 
     /* Websocket */
     const ws = new WsApi(this, "roomWs", { name: "TalkiRoomWs" });
@@ -33,7 +33,7 @@ class InfraStack extends cdk.Stack {
 
     /* OUTPUTS */
     new CfnOutput(this, "BackendLambdaUrl", {
-      value: lambda.urlObj.url,
+      value: appLambda.urlObj.url,
       description: "The https endpoint where your app is hosted",
     });
     new CfnOutput(this, "RoomWsUrl", {

@@ -1,6 +1,6 @@
 import { SessionData } from "express-session";
 import { Schema, InferSchemaType } from "mongoose";
-import generateNonce from "utils/generateNonce";
+import generateNonce from "@utils/generateNonce";
 
 const userDataSchema = new Schema(
   {

@@ -7,7 +7,7 @@
   "scripts": {
     "ci": "bash devOps/ci.sh",
     "rm": "bash devOps/rm.sh",
-    "dev": "NODE_ENV=development env-cmd nodemon -x ts-node src/index.development.ts",
+    "dev": "NODE_ENV=development env-cmd nodemon src/lambdas/app/index.development.ts",
     "build:dev": "bash devOps/build/dev.sh",
     "build:prod": "bash devOps/build/prod.sh",
     "start:dev": "NODE_ENV=production env-cmd node dist/index.development.js",
@@ -17,6 +17,7 @@
     "diff": "NODE_ENV=production bash devOps/diff.sh"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.110",
     "@types/connect-redis": "^0.0.19",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.15",
