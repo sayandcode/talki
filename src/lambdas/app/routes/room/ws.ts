@@ -1,4 +1,3 @@
-import makeRoomWs$connectRoute from "@appLambda/controllers/room/ws/$connect/index.controller";
 import { Router } from "express";
 import DatabaseClients from "@appLambda/services/db";
 
@@ -7,10 +6,9 @@ import DatabaseClients from "@appLambda/services/db";
  * It is a secret value for each client, that is known only by the ws and http(this) server.
  * Therefore it acts as a password.
  */
-function makeRoomWsRouter(databaseClients: DatabaseClients): Router {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function makeRoomWsRouter(_databaseClients: DatabaseClients): Router {
   const roomWsRouter = Router();
-
-  roomWsRouter.post("/connect", makeRoomWs$connectRoute(databaseClients));
 
   return roomWsRouter;
 }

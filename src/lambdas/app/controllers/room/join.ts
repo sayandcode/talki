@@ -1,20 +1,16 @@
 import { ApiError } from "@appLambda/middleware/errors";
-import makeRoomModel, { RoomId } from "models/Room/index.model";
+import makeRoomModel from "models/Room/index.model";
 import DatabaseClients from "@appLambda/services/db";
 import makeAsyncController from "@appLambda/utils/reqRes/asyncController";
 import { z } from "zod";
 import APP_ENV_VARS from "@appLambda/env";
 import { fromZodError } from "zod-validation-error";
-import { RoomIdValidator } from "./_utils/validators";
+import RoomModelValidators from "models/Room/index.validator";
 import { getUserDataFromAuthedReq } from "./_utils/reqManipulators";
 
 const BodyValidator = z.object({
-  roomId: RoomIdValidator,
+  roomId: RoomModelValidators.roomId,
 });
-
-type RequiredBody = {
-  roomId: RoomId;
-};
 
 function makeRoomJoinController(databaseClients: DatabaseClients) {
   return makeAsyncController(async (req, res, next) => {
@@ -27,7 +23,7 @@ function makeRoomJoinController(databaseClients: DatabaseClients) {
       return;
     }
 
-    const { roomId } = bodyParseResult.data satisfies RequiredBody;
+    const { roomId } = bodyParseResult.data;
 
     const Room = makeRoomModel(databaseClients.mongoClient);
     const requestedRoom = await Room.findById(roomId);
