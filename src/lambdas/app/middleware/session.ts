@@ -1,5 +1,5 @@
 import session from "express-session";
-import APP_ENV_VARS from "@utils/env";
+import APP_ENV_VARS from "@appLambda/env";
 import createRedisStore from "connect-redis";
 import DatabaseClients from "@appLambda/services/db";
 

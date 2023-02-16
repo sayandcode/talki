@@ -1,4 +1,4 @@
-import APP_ENV_VARS from "@utils/env";
+import APP_ENV_VARS from "@appLambda/env";
 import makeAsyncController from "@appLambda/utils/reqRes/asyncController";
 import DatabaseClients from "@appLambda/services/db";
 import generateNonce from "@utils/generateNonce";

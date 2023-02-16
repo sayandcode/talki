@@ -1,7 +1,7 @@
 import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as path from "node:path";
-import APP_ENV_VARS from "../../utils/env";
+import APP_ENV_VARS from "./env";
 
 class BackendLambda extends Construct {
   public fn: lambda.Function;
@@ -11,7 +11,10 @@ class BackendLambda extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    const codeLocalUri = path.join(__dirname, "../../../dist.production/app/");
+    const codeLocalUri = path.join(
+      __dirname,
+      "../../../../dist.production/app/"
+    );
     this.fn = new lambda.Function(this, "backendFunction", {
       runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromAsset(codeLocalUri),

@@ -3,25 +3,27 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Stack } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as path from "node:path";
+import ROOM_WS_AUTHORIZER_ENV_VARS from "./env";
 
-type WsLambdaAuthorizerProps = {
+type Props = {
   apiId: CfnRouteProps["apiId"];
 };
 
-class RoomWsConnectAuthorizer extends Construct {
+class RoomWsAuthorizer extends Construct {
   public readonly authorizerId: CfnAuthorizer["attrAuthorizerId"];
 
-  constructor(scope: Construct, id: string, props: WsLambdaAuthorizerProps) {
+  constructor(scope: Construct, id: string, props: Props) {
     super(scope, id);
 
     const codeLocalUri = path.join(
       __dirname,
-      "../../../dist.production/roomWsAuthorizer/"
+      "../../../../dist.production/roomWsAuthorizer/"
     );
     const authFn = new lambda.Function(this, "authFn", {
       runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromAsset(codeLocalUri),
       handler: "index.handler",
+      environment: ROOM_WS_AUTHORIZER_ENV_VARS,
     });
 
     const { region, account } = Stack.of(this);
@@ -30,7 +32,11 @@ class RoomWsConnectAuthorizer extends Construct {
       apiId: props.apiId,
       authorizerType: "REQUEST",
       authorizerUri: `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${authFn.functionArn}/invocations`,
-      identitySource: ["route.request.querystring.myParam1"],
+      identitySource: [
+        "route.request.querystring.roomId",
+        "route.request.querystring.memberId",
+        "route.request.querystring.nonce",
+      ],
     });
     this.authorizerId = authorizer.attrAuthorizerId;
 
@@ -43,4 +49,4 @@ class RoomWsConnectAuthorizer extends Construct {
   }
 }
 
-export default RoomWsConnectAuthorizer;
+export default RoomWsAuthorizer;

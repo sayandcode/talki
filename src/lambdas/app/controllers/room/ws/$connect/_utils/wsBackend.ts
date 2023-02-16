@@ -2,7 +2,7 @@ import {
   ApiGatewayManagementApiClient,
   PostToConnectionCommand,
 } from "@aws-sdk/client-apigatewaymanagementapi";
-import APP_ENV_VARS from "@utils/env";
+import APP_ENV_VARS from "@appLambda/env";
 
 class WsBackend {
   private client: ApiGatewayManagementApiClient;

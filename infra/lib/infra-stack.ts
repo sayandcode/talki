@@ -1,11 +1,12 @@
 import * as cdk from "aws-cdk-lib";
 import { CfnOutput } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import BackendLambda from "./constructs/backendLambda";
+import AppLambda from "./constructs/appLambda";
 import WsApi from "./constructs/wsApi";
 import getWsEndpoint from "./utils/wsEndpoint";
 import WsMockRoute from "./constructs/wsMockRoute";
-import RoomWsConnectAuthorizer from "./constructs/wsAuthorizerLambda";
+import RoomWsAuthorizer from "./constructs/roomWsAuthorizer";
+import APP_ENV_VARS from "./constructs/appLambda/env";
 
 class InfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -13,18 +14,16 @@ class InfraStack extends cdk.Stack {
 
     /* CREATE RESOURCES */
     /* Lambda */
-    const appLambda = new BackendLambda(this, "expressBackend");
+    const appLambda = new AppLambda(this, "appLambda");
 
     /* Websocket */
     const ws = new WsApi(this, "roomWs", { name: "TalkiRoomWs" });
     const wsEndpoint = getWsEndpoint(ws);
 
     // $connect route
-    const roomWsAuthorizer = new RoomWsConnectAuthorizer(
-      this,
-      "roomWsAuthorizerLambda",
-      { apiId: ws.apiResource.attrApiId }
-    );
+    const roomWsAuthorizer = new RoomWsAuthorizer(this, "roomWsAuthorizer", {
+      apiId: ws.apiResource.attrApiId,
+    });
     new WsMockRoute(this, "roomWsConnectRoute", {
       apiId: ws.apiResource.attrApiId,
       routeKey: "$connect",
@@ -42,6 +41,11 @@ class InfraStack extends cdk.Stack {
       routeKey: "$default",
       responseBody: "Invalid action. Please try with a different action.",
     });
+
+    /* WIRING */
+    // lambda
+    const wsEnvVarKey = "ROOM_WS_URL" satisfies keyof typeof APP_ENV_VARS;
+    appLambda.fn.addEnvironment(wsEnvVarKey, wsEndpoint);
 
     /* OUTPUTS */
     new CfnOutput(this, "BackendLambdaUrl", {

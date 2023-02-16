@@ -3,8 +3,8 @@ import makeRoomModel, { RoomId } from "models/Room/index.model";
 import DatabaseClients from "@appLambda/services/db";
 import makeAsyncController from "@appLambda/utils/reqRes/asyncController";
 import { z } from "zod";
+import APP_ENV_VARS from "@appLambda/env";
 import { fromZodError } from "zod-validation-error";
-import APP_ENV_VARS from "@utils/env";
 import { RoomIdValidator } from "./_utils/validators";
 import { getUserDataFromAuthedReq } from "./_utils/reqManipulators";
 
