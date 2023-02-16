@@ -1,4 +1,4 @@
-import { CfnApi, CfnDeployment, CfnStage } from "aws-cdk-lib/aws-apigatewayv2";
+import { CfnApi, CfnStage } from "aws-cdk-lib/aws-apigatewayv2";
 import { Construct } from "constructs";
 
 type Props = {
@@ -7,8 +7,6 @@ type Props = {
 
 class WsApi extends Construct {
   public apiResource: CfnApi;
-
-  public deploymentResource: CfnDeployment;
 
   public stageResource: CfnStage;
 
