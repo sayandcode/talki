@@ -6,7 +6,6 @@ import WsApi from "./constructs/wsApi";
 import getWsEndpoint from "./utils/wsEndpoint";
 import WsMockRoute from "./constructs/wsMockRoute";
 import RoomWsAuthorizer from "./constructs/roomWsAuthorizer";
-import APP_ENV_VARS from "./constructs/appLambda/env";
 
 class InfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -44,8 +43,9 @@ class InfraStack extends cdk.Stack {
 
     /* WIRING */
     // lambda
-    const wsEnvVarKey = "ROOM_WS_URL" satisfies keyof typeof APP_ENV_VARS;
-    appLambda.fn.addEnvironment(wsEnvVarKey, wsEndpoint);
+    appLambda.addWsUrl(wsEndpoint);
+    roomWsAuthorizer.addWsUrl(wsEndpoint);
+    roomWsAuthorizer.addWsPermission(ws);
 
     /* OUTPUTS */
     new CfnOutput(this, "BackendLambdaUrl", {

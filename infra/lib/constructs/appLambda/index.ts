@@ -4,7 +4,7 @@ import * as path from "node:path";
 import APP_ENV_VARS from "./env";
 
 class BackendLambda extends Construct {
-  public fn: lambda.Function;
+  private fn: lambda.Function;
 
   public urlObj: lambda.FunctionUrl;
 
@@ -29,6 +29,11 @@ class BackendLambda extends Construct {
         allowCredentials: true,
       },
     });
+  }
+
+  addWsUrl(wsUrl: string) {
+    const wsEnvVarKey = "ROOM_WS_URL" satisfies keyof typeof APP_ENV_VARS;
+    this.fn.addEnvironment(wsEnvVarKey, wsUrl);
   }
 }
 

@@ -1,6 +1,6 @@
-const { MONGODB_CONNECTION_URL } = process.env;
+const { MONGODB_CONNECTION_URL, ROOM_WS_URL } = process.env;
 
-const ROOM_WS_AUTHORIZER_ENV_VARS = { MONGODB_CONNECTION_URL };
+const ROOM_WS_AUTHORIZER_ENV_VARS = { MONGODB_CONNECTION_URL, ROOM_WS_URL };
 
 if (!getIsEnvValid(ROOM_WS_AUTHORIZER_ENV_VARS))
   throw new Error("Env variables not set correctly");

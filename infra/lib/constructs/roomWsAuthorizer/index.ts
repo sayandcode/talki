@@ -4,6 +4,8 @@ import { Stack } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as path from "node:path";
 import ROOM_WS_AUTHORIZER_ENV_VARS from "./env";
+import WsApi from "../wsApi";
+import getWsReplyPermission from "../../utils/lambdaWsReplyPermission";
 
 type Props = {
   apiId: CfnRouteProps["apiId"];
@@ -12,6 +14,8 @@ type Props = {
 class RoomWsAuthorizer extends Construct {
   public readonly authorizerId: CfnAuthorizer["attrAuthorizerId"];
 
+  private authFn: lambda.Function;
+
   constructor(scope: Construct, id: string, props: Props) {
     super(scope, id);
 
@@ -19,7 +23,7 @@ class RoomWsAuthorizer extends Construct {
       __dirname,
       "../../../../dist.production/roomWsAuthorizer/"
     );
-    const authFn = new lambda.Function(this, "authFn", {
+    this.authFn = new lambda.Function(this, "authFn", {
       runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromAsset(codeLocalUri),
       handler: "index.handler",
@@ -31,7 +35,7 @@ class RoomWsAuthorizer extends Construct {
       name: "ConnectNonceLambdaAuthorizer",
       apiId: props.apiId,
       authorizerType: "REQUEST",
-      authorizerUri: `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${authFn.functionArn}/invocations`,
+      authorizerUri: `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${this.authFn.functionArn}/invocations`,
       identitySource: [
         "route.request.querystring.roomId",
         "route.request.querystring.memberId",
@@ -42,10 +46,22 @@ class RoomWsAuthorizer extends Construct {
 
     new lambda.CfnPermission(this, "authFnCallPermissionForApiGw", {
       action: "lambda:InvokeFunction",
-      functionName: authFn.functionArn,
+      functionName: this.authFn.functionArn,
       principal: "apigateway.amazonaws.com",
       sourceArn: `arn:aws:execute-api:${region}:${account}:${props.apiId}/authorizers/${this.authorizerId}`,
     });
+  }
+
+  addWsUrl(wsUrl: string) {
+    const wsEnvVarKey =
+      "ROOM_WS_URL" satisfies keyof typeof ROOM_WS_AUTHORIZER_ENV_VARS;
+    this.authFn.addEnvironment(wsEnvVarKey, wsUrl);
+  }
+
+  addWsPermission(ws: WsApi) {
+    const thisStack = Stack.of(this);
+    const wsReplyPermission = getWsReplyPermission(thisStack, ws);
+    this.authFn.addToRolePolicy(wsReplyPermission);
   }
 }
 
