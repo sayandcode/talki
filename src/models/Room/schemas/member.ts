@@ -22,7 +22,7 @@ const roomMemberSchema = new Schema(
   { _id: false }
 );
 
-function getRoomMemberData(
+function generateRoomMemberData(
   userData: SessionData["userData"],
   isFirstMember: boolean
 ) {
@@ -38,5 +38,5 @@ function getRoomMemberData(
 type RoomMemberSchemaType = InferSchemaType<typeof roomMemberSchema>;
 
 export default roomMemberSchema;
-export { getRoomMemberData };
+export { generateRoomMemberData };
 export type { RoomMemberSchemaType };

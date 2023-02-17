@@ -4,7 +4,7 @@ import {
   Connection as MongooseConnection,
 } from "mongoose";
 import { createMapFromObj } from "../utils/map";
-import { getRoomMemberData } from "./schemas/member";
+import { generateRoomMemberData } from "./schemas/member";
 import roomSchema from "./schemas/room";
 
 type RoomDocument = HydratedDocumentFromSchema<typeof roomSchema>;
@@ -17,7 +17,7 @@ function makeRoomModel(mongoClient: MongooseConnection) {
   // Having a wrapper class, provides the strict type checking.
   class Room extends RoomModel {
     static async make(adminUserData: SessionData["userData"]) {
-      const adminMember = getRoomMemberData(adminUserData, true);
+      const adminMember = generateRoomMemberData(adminUserData, true);
       const newRoom = new this({
         members: createMapFromObj({
           [adminMember.memberId]: adminMember,
