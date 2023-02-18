@@ -3,7 +3,10 @@ import DatabaseClients from "@appLambda/services/db";
 import makeAsyncController from "@appLambda/utils/reqRes/asyncController";
 import makeRoomModel from "models/Room/index.model";
 import { fromZodError } from "zod-validation-error";
-import { getIsMemberConnected } from "models/Room/schemas/member/helperFns";
+import {
+  getIsMemberAllowed,
+  getIsMemberConnected,
+} from "models/Room/schemas/member/helperFns";
 import RoomWsAllowMemberInRoomBodyValidator from "./_utils/bodyValidator";
 import askOtherMembersToConnectToNewMember from "./_utils/askOtherMembersToConnectToNewMember";
 import getIsConnectionIdSameAsAdmin from "./_utils/isConnectionIdSameAsAdmin";
@@ -26,14 +29,14 @@ function makeWsAllowMemberInRoomController(databaseClients: DatabaseClients) {
     const {
       roomId,
       newMemberId,
-      isAllowedInRoom: isNewMemberAllowedInRoom,
+      isAllowedInRoom: isNewMemberAllowedInRoomByAdmin,
       connectionId: senderConnectionId,
     } = bodyParseResult.data;
 
     const Room = makeRoomModel(databaseClients.mongoClient);
     const requestedRoom = await Room.findById(roomId);
     if (!requestedRoom) {
-      next(new ApiError(400, "Requested room doesn't exist"));
+      next(new ApiError(404, "Requested room doesn't exist"));
       return;
     }
 
@@ -50,19 +53,24 @@ function makeWsAllowMemberInRoomController(databaseClients: DatabaseClients) {
 
     // process the admin's decision for the new member
     const newMember = requestedRoom.members.get(newMemberId);
-    if (!(newMember && getIsMemberConnected(newMember))) {
-      const msg = "The new member isn't a connected member of the room";
+    const isItPossibleToAddNewMember =
+      newMember &&
+      getIsMemberConnected(newMember) &&
+      !getIsMemberAllowed(newMember);
+    if (!isItPossibleToAddNewMember) {
+      const msg = "Cannot allow this member in room";
       next(new ApiError(400, msg));
       return;
     }
     await processAdminDecisionOnNewMember({
-      isNewMemberAllowedInRoom,
+      isNewMemberAllowedInRoomByAdmin,
       requestedRoom,
       newMember,
     });
 
     // ask other members to connect to new member
-    await askOtherMembersToConnectToNewMember(requestedRoom, newMemberId);
+    if (isNewMemberAllowedInRoomByAdmin)
+      await askOtherMembersToConnectToNewMember(requestedRoom, newMemberId);
 
     res.status(200).send("Member allowed, and prompts sent");
   });

@@ -23,7 +23,7 @@ function getOtherMembersConnectionIds(
 ) {
   const allowedMembers = requestedRoom.getAllowedMembers();
   const otherMembers = allowedMembers.filter(
-    (member) => member.memberId === newMemberId
+    (member) => member.memberId !== newMemberId
   );
   return otherMembers.map((member) => member.connectionId);
 }

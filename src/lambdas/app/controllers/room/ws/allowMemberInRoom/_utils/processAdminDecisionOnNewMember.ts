@@ -7,15 +7,15 @@ const wsUrl = APP_ENV_VARS.ROOM_WS_URL;
 const wsBackend = new WsBackend(wsUrl);
 
 async function processAdminDecisionOnNewMember({
-  isNewMemberAllowedInRoom,
+  isNewMemberAllowedInRoomByAdmin,
   requestedRoom,
   newMember,
 }: {
-  isNewMemberAllowedInRoom: boolean;
+  isNewMemberAllowedInRoomByAdmin: boolean;
   requestedRoom: RoomDocument;
   newMember: ConnectedRoomMember;
 }) {
-  if (!isNewMemberAllowedInRoom) {
+  if (!isNewMemberAllowedInRoomByAdmin) {
     requestedRoom.members.delete(newMember.memberId);
     await wsBackend.deleteConnection(newMember.connectionId);
   } else {
