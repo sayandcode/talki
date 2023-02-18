@@ -1,6 +1,4 @@
-import { SessionData } from "express-session";
 import { Schema, InferSchemaType } from "mongoose";
-import generateNonce from "@utils/generateNonce";
 
 const userDataSchema = new Schema(
   {
@@ -22,24 +20,13 @@ const roomMemberSchema = new Schema(
   { _id: false }
 );
 
-function generateRoomMemberData(
-  userData: SessionData["userData"],
-  isFirstMember: boolean
-) {
-  return {
-    userData,
-    memberId: userData.userId,
-    connectionId: undefined,
-    nonce: generateNonce().nonce, // to verify identity in ws connection
-    isAllowedInRoom: isFirstMember,
-  };
-}
-
 type RoomMember = InferSchemaType<typeof roomMemberSchema>;
 type ConnectedRoomMember = RoomMember & {
   connectionId: NonNullable<RoomMember["connectionId"]>;
 };
+type AllowedRoomMember = ConnectedRoomMember & {
+  isAllowedInRoom: true;
+};
 
 export default roomMemberSchema;
-export { generateRoomMemberData };
-export type { RoomMember, ConnectedRoomMember };
+export type { RoomMember, ConnectedRoomMember, AllowedRoomMember };

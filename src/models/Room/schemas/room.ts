@@ -1,6 +1,10 @@
 import { SessionData } from "express-session";
 import { Schema } from "mongoose";
-import roomMemberSchema, { generateRoomMemberData, RoomMember } from "./member";
+import { generateRoomMemberData, getIsMemberAllowed } from "./member/helperFns";
+import roomMemberSchema, {
+  AllowedRoomMember,
+  RoomMember,
+} from "./member/index.schema";
 
 const ROOM_TIMEOUT = 15 * 60; // seconds
 
@@ -62,6 +66,14 @@ const roomSchema = new Schema(
           if (member.connectionId === connectionId) return member;
         }
         return null;
+      },
+
+      getAllowedMembers() {
+        const allowedMembers: AllowedRoomMember[] = [];
+        for (const member of this.members.values()) {
+          if (getIsMemberAllowed(member)) allowedMembers.push(member);
+        }
+        return allowedMembers;
       },
     },
   }

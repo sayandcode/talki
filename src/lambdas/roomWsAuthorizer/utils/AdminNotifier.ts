@@ -1,6 +1,10 @@
 import WsBackend from "@utils/WsBackend";
 import { RoomDocument } from "models/Room/index.model";
-import { ConnectedRoomMember, RoomMember } from "models/Room/schemas/member";
+import { getIsMemberConnected } from "models/Room/schemas/member/helperFns";
+import {
+  ConnectedRoomMember,
+  RoomMember,
+} from "models/Room/schemas/member/index.schema";
 import ROOM_WS_AUTHORIZER_ENV_VARS from "../env";
 
 const wsUrl = ROOM_WS_AUTHORIZER_ENV_VARS.ROOM_WS_URL;
@@ -29,12 +33,6 @@ class AdminNotifier {
         "Verify that admin is connected to websocket, before sending messages"
       );
     return adminMember;
-
-    function getIsMemberConnected(
-      givenMember: Member
-    ): givenMember is ConnectedRoomMember {
-      return !!givenMember.connectionId;
-    }
   }
 
   private get msg() {

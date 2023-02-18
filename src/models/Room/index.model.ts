@@ -4,7 +4,7 @@ import {
   Connection as MongooseConnection,
 } from "mongoose";
 import { createMapFromObj } from "../utils/map";
-import { generateRoomMemberData } from "./schemas/member";
+import { generateRoomMemberData } from "./schemas/member/helperFns";
 import roomSchema from "./schemas/room";
 
 type RoomDocument = HydratedDocumentFromSchema<typeof roomSchema>;

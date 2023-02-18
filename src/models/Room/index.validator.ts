@@ -1,6 +1,6 @@
 import { z, ZodType } from "zod";
 import { RoomId } from "./index.model";
-import { RoomMember } from "./schemas/member";
+import { RoomMember } from "./schemas/member/index.schema";
 
 type ConnectionId = NonNullable<RoomMember["connectionId"]>;
 type MemberId = RoomMember["memberId"];

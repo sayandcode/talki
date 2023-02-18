@@ -3,14 +3,11 @@ import DatabaseClients from "@appLambda/services/db";
 import makeAsyncController from "@appLambda/utils/reqRes/asyncController";
 import makeRoomModel from "models/Room/index.model";
 import { fromZodError } from "zod-validation-error";
-import { ConnectedRoomMember, RoomMember } from "models/Room/schemas/member";
-import {
-  getIsConnectionIdSameAsAdmin,
-  getOtherAllowedMembersConnectionIds,
-  processAdminDecisionOnNewMember,
-  sendPromptsToOpenNewConnection,
-} from "./_utils/connectionHelpers";
+import { getIsMemberConnected } from "models/Room/schemas/member/helperFns";
 import RoomWsAllowMemberInRoomBodyValidator from "./_utils/bodyValidator";
+import askOtherMembersToConnectToNewMember from "./_utils/askOtherMembersToConnectToNewMember";
+import getIsConnectionIdSameAsAdmin from "./_utils/isConnectionIdSameAsAdmin";
+import processAdminDecisionOnNewMember from "./_utils/processAdminDecisionOnNewMember";
 
 /**
  * Only admin is allowed in this route. So we check the connectionId internally, before conducting
@@ -51,7 +48,7 @@ function makeWsAllowMemberInRoomController(databaseClients: DatabaseClients) {
       return;
     }
 
-    // make the new member an allowed member
+    // process the admin's decision for the new member
     const newMember = requestedRoom.members.get(newMemberId);
     if (!(newMember && getIsMemberConnected(newMember))) {
       const msg = "The new member isn't a connected member of the room";
@@ -65,23 +62,10 @@ function makeWsAllowMemberInRoomController(databaseClients: DatabaseClients) {
     });
 
     // ask other members to connect to new member
-    const otherMembersConnectionIds = getOtherAllowedMembersConnectionIds(
-      requestedRoom,
-      newMemberId
-    );
-    await sendPromptsToOpenNewConnection(
-      otherMembersConnectionIds,
-      newMemberId
-    );
+    await askOtherMembersToConnectToNewMember(requestedRoom, newMemberId);
 
     res.status(200).send("Member allowed, and prompts sent");
   });
-}
-
-function getIsMemberConnected(
-  member: RoomMember
-): member is ConnectedRoomMember {
-  return !!member.connectionId;
 }
 
 export default makeWsAllowMemberInRoomController;
