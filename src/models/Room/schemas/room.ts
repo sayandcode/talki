@@ -31,12 +31,6 @@ const roomSchema = new Schema(
         return memberData;
       },
 
-      getIsAdminConnected() {
-        const adminMember = this.members.get(this.adminMemberId);
-        if (!adminMember) throw new Error("Room doesn't have an admin member");
-        return !!adminMember.connectionId;
-      },
-
       /**
        * @returns boolean Whether or not the nonces are same
        */
@@ -60,6 +54,17 @@ const roomSchema = new Schema(
         const member = this.members.get(adminMemberId);
         if (!member) throw new Error("Room doesn't have admin member");
         return member;
+      },
+
+      /**
+       * With the help of this function, we authenticate a user based on the connectionId.
+       * This is legit, cause the connectionId is only known by the API gateway and the backend app.
+       */
+      getMemberFromConnectionId(connectionId: ConnectionId) {
+        for (const member of this.members.values()) {
+          if (member.connectionId === connectionId) return member;
+        }
+        return null;
       },
     },
   }

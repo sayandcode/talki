@@ -31,7 +31,7 @@ export const handler: Handler = async ({
 
   // make sure that the room is ready to accept members
   const isThisRequestNotFromAdmin = requestedRoom.adminMemberId !== memberId;
-  const isAdminNotConnected = !requestedRoom.getIsAdminConnected();
+  const isAdminNotConnected = !requestedRoom.getAdminMember().connectionId;
   if (isThisRequestNotFromAdmin && isAdminNotConnected)
     return rejectedAuthPolicy;
 
