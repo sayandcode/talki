@@ -16,7 +16,9 @@ import processAdminDecisionOnNewMember from "./_utils/processAdminDecisionOnNewM
  * Only admin is allowed in this route. So we check the connectionId internally, before conducting
  * any actions.
  */
-function makeWsAllowMemberInRoomController(databaseClients: DatabaseClients) {
+function makeRoomWsAllowMemberInRoomController(
+  databaseClients: DatabaseClients
+) {
   return makeAsyncController(async (req, res, next) => {
     const bodyParseResult = RoomWsAllowMemberInRoomBodyValidator.safeParse(
       req.body
@@ -76,4 +78,4 @@ function makeWsAllowMemberInRoomController(databaseClients: DatabaseClients) {
   });
 }
 
-export default makeWsAllowMemberInRoomController;
+export default makeRoomWsAllowMemberInRoomController;
