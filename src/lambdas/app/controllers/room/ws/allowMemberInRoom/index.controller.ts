@@ -1,22 +1,16 @@
 import { ApiError } from "@appLambda/middleware/errors";
 import DatabaseClients from "@appLambda/services/db";
 import makeAsyncController from "@appLambda/utils/reqRes/asyncController";
-import WsBackend from "@utils/WsBackend";
-import RoomModelValidators from "models/Room/index.validator";
 import makeRoomModel from "models/Room/index.model";
-import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
-import APP_ENV_VARS from "@appLambda/env";
-
-const BodyValidator = z.object({
-  connectionId: RoomModelValidators.connectionId,
-  isAllowedInRoom: z.boolean(),
-  newMemberId: RoomModelValidators.memberId,
-  roomId: RoomModelValidators.roomId,
-});
-
-const wsUrl = APP_ENV_VARS.ROOM_WS_URL;
-const wsBackend = new WsBackend(wsUrl);
+import { ConnectedRoomMember, RoomMember } from "models/Room/schemas/member";
+import {
+  getIsConnectionIdSameAsAdmin,
+  getOtherAllowedMembersConnectionIds,
+  processAdminDecisionOnNewMember,
+  sendPromptsToOpenNewConnection,
+} from "./_utils/connectionHelpers";
+import RoomWsAllowMemberInRoomBodyValidator from "./_utils/bodyValidator";
 
 /**
  * Only admin is allowed in this route. So we check the connectionId internally, before conducting
@@ -24,7 +18,9 @@ const wsBackend = new WsBackend(wsUrl);
  */
 function makeWsAllowMemberInRoomController(databaseClients: DatabaseClients) {
   return makeAsyncController(async (req, res, next) => {
-    const bodyParseResult = BodyValidator.safeParse(req.body);
+    const bodyParseResult = RoomWsAllowMemberInRoomBodyValidator.safeParse(
+      req.body
+    );
     if (!bodyParseResult.success) {
       const errMsg = fromZodError(bodyParseResult.error).message;
       next(new ApiError(400, errMsg));
@@ -45,10 +41,10 @@ function makeWsAllowMemberInRoomController(databaseClients: DatabaseClients) {
     }
 
     // verify that sender is admin
-    const senderMember =
-      requestedRoom.getMemberFromConnectionId(senderConnectionId);
-    const isSenderTheAdmin =
-      senderMember && senderMember.memberId === requestedRoom.adminMemberId;
+    const isSenderTheAdmin = getIsConnectionIdSameAsAdmin(
+      requestedRoom,
+      senderConnectionId
+    );
     if (!isSenderTheAdmin) {
       const msg = "Only the admin of a room is allowed to send this request";
       next(new ApiError(403, msg));
@@ -57,40 +53,35 @@ function makeWsAllowMemberInRoomController(databaseClients: DatabaseClients) {
 
     // make the new member an allowed member
     const newMember = requestedRoom.members.get(newMemberId);
-    if (!(newMember && newMember.connectionId)) {
+    if (!(newMember && getIsMemberConnected(newMember))) {
       const msg = "The new member isn't a connected member of the room";
       next(new ApiError(400, msg));
       return;
     }
-    if (!isNewMemberAllowedInRoom) {
-      requestedRoom.members.delete(newMemberId);
-      await wsBackend.deleteConnection(newMember.connectionId);
-    } else {
-      newMember.isAllowedInRoom = true;
-    }
-    await requestedRoom.save();
+    await processAdminDecisionOnNewMember({
+      isNewMemberAllowedInRoom,
+      requestedRoom,
+      newMember,
+    });
 
-    // find all allowed members
-    const connectionIdsToSendNewConnectionPrompt: string[] = [];
-    for (const member of requestedRoom.members.values()) {
-      if (member.memberId === newMemberId) break;
-      if (!member.connectionId)
-        throw new Error("Allowed member doesn't have a connectionId");
-      connectionIdsToSendNewConnectionPrompt.push(member.connectionId);
-    }
-
-    // send them a prompt to open a new connection
-    const connectionToNewConnectionPrompt = async (connectionId: string) => {
-      const msg = { action: "sendConnectionOffer", payload: { newMemberId } };
-      await wsBackend.sendMsgToWs(connectionId, msg);
-    };
-    const newConnectionPrompts = connectionIdsToSendNewConnectionPrompt.map(
-      connectionToNewConnectionPrompt
+    // ask other members to connect to new member
+    const otherMembersConnectionIds = getOtherAllowedMembersConnectionIds(
+      requestedRoom,
+      newMemberId
     );
-    await Promise.all(newConnectionPrompts);
+    await sendPromptsToOpenNewConnection(
+      otherMembersConnectionIds,
+      newMemberId
+    );
 
     res.status(200).send("Member allowed, and prompts sent");
   });
+}
+
+function getIsMemberConnected(
+  member: RoomMember
+): member is ConnectedRoomMember {
+  return !!member.connectionId;
 }
 
 export default makeWsAllowMemberInRoomController;

@@ -1,10 +1,10 @@
 import { z, ZodType } from "zod";
 import { RoomId } from "./index.model";
-import { RoomMemberSchemaType } from "./schemas/member";
+import { RoomMember } from "./schemas/member";
 
-type ConnectionId = NonNullable<RoomMemberSchemaType["connectionId"]>;
-type MemberId = RoomMemberSchemaType["memberId"];
-type Nonce = NonNullable<RoomMemberSchemaType["nonce"]>;
+type ConnectionId = NonNullable<RoomMember["connectionId"]>;
+type MemberId = RoomMember["memberId"];
+type Nonce = NonNullable<RoomMember["nonce"]>;
 
 class RoomModelValidators {
   static readonly roomId = z.string().length(24) satisfies ZodType<RoomId>;

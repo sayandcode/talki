@@ -1,15 +1,12 @@
 import { SessionData } from "express-session";
 import { Schema } from "mongoose";
-import roomMemberSchema, {
-  generateRoomMemberData,
-  RoomMemberSchemaType,
-} from "./member";
+import roomMemberSchema, { generateRoomMemberData, RoomMember } from "./member";
 
 const ROOM_TIMEOUT = 15 * 60; // seconds
 
-type MemberId = RoomMemberSchemaType["memberId"];
-type Nonce = NonNullable<RoomMemberSchemaType["nonce"]>;
-type ConnectionId = NonNullable<RoomMemberSchemaType["connectionId"]>;
+type MemberId = RoomMember["memberId"];
+type Nonce = NonNullable<RoomMember["nonce"]>;
+type ConnectionId = NonNullable<RoomMember["connectionId"]>;
 
 const roomSchema = new Schema(
   {

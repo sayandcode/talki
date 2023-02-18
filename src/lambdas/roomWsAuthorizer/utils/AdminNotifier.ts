@@ -1,17 +1,13 @@
 import WsBackend from "@utils/WsBackend";
 import { RoomDocument } from "models/Room/index.model";
-import { RoomMemberSchemaType } from "models/Room/schemas/member";
+import { ConnectedRoomMember, RoomMember } from "models/Room/schemas/member";
 import ROOM_WS_AUTHORIZER_ENV_VARS from "../env";
 
 const wsUrl = ROOM_WS_AUTHORIZER_ENV_VARS.ROOM_WS_URL;
 const wsBackend = new WsBackend(wsUrl);
 
-type Member = RoomMemberSchemaType;
+type Member = RoomMember;
 type MemberId = Member["memberId"];
-
-type ConnectedMember = Member & {
-  connectionId: NonNullable<Member["connectionId"]>;
-};
 
 class AdminNotifier {
   constructor(
@@ -24,7 +20,7 @@ class AdminNotifier {
     await wsBackend.sendMsgToWs(adminMember.connectionId, msg);
   }
 
-  private get adminMember(): ConnectedMember {
+  private get adminMember(): ConnectedRoomMember {
     const adminMember = this.requestedRoom.getAdminMember();
     if (adminMember.memberId === this.requestingMemberId)
       throw new Error("Admin member doesn't need to request to join room");
@@ -36,7 +32,7 @@ class AdminNotifier {
 
     function getIsMemberConnected(
       givenMember: Member
-    ): givenMember is ConnectedMember {
+    ): givenMember is ConnectedRoomMember {
       return !!givenMember.connectionId;
     }
   }

@@ -35,8 +35,11 @@ function generateRoomMemberData(
   };
 }
 
-type RoomMemberSchemaType = InferSchemaType<typeof roomMemberSchema>;
+type RoomMember = InferSchemaType<typeof roomMemberSchema>;
+type ConnectedRoomMember = RoomMember & {
+  connectionId: NonNullable<RoomMember["connectionId"]>;
+};
 
 export default roomMemberSchema;
 export { generateRoomMemberData };
-export type { RoomMemberSchemaType };
+export type { RoomMember, ConnectedRoomMember };
