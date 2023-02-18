@@ -5,7 +5,7 @@ import roomMemberSchema, {
   RoomMemberSchemaType,
 } from "./member";
 
-const ROOM_TIMEOUT = 5 * 60; // seconds
+const ROOM_TIMEOUT = 15 * 60; // seconds
 
 type MemberId = RoomMemberSchemaType["memberId"];
 type Nonce = NonNullable<RoomMemberSchemaType["nonce"]>;

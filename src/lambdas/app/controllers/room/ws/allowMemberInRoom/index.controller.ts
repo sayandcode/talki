@@ -57,13 +57,14 @@ function makeWsAllowMemberInRoomController(databaseClients: DatabaseClients) {
 
     // make the new member an allowed member
     const newMember = requestedRoom.members.get(newMemberId);
-    if (!newMember) {
-      const msg = "newMemberId doesn't refer to a real member";
+    if (!(newMember && newMember.connectionId)) {
+      const msg = "The new member isn't a connected member of the room";
       next(new ApiError(400, msg));
       return;
     }
     if (!isNewMemberAllowedInRoom) {
       requestedRoom.members.delete(newMemberId);
+      await wsBackend.deleteConnection(newMember.connectionId);
     } else {
       newMember.isAllowedInRoom = true;
     }
@@ -79,12 +80,16 @@ function makeWsAllowMemberInRoomController(databaseClients: DatabaseClients) {
     }
 
     // send them a prompt to open a new connection
-    connectionIdsToSendNewConnectionPrompt.forEach(async (connectionId) => {
+    const connectionToNewConnectionPrompt = async (connectionId: string) => {
       const msg = { action: "sendConnectionOffer", payload: { newMemberId } };
       await wsBackend.sendMsgToWs(connectionId, msg);
-    });
+    };
+    const newConnectionPrompts = connectionIdsToSendNewConnectionPrompt.map(
+      connectionToNewConnectionPrompt
+    );
+    await Promise.all(newConnectionPrompts);
 
-    res.send();
+    res.status(200).send("Member allowed, and prompts sent");
   });
 }
 

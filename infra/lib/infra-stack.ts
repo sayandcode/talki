@@ -6,6 +6,7 @@ import WsApi from "./constructs/wsApi";
 import getWsEndpoint from "./utils/wsEndpoint";
 import WsMockRoute from "./constructs/wsMockRoute";
 import RoomWsAuthorizer from "./constructs/roomWsAuthorizer";
+import WsHttpRoute from "./constructs/wsHttpRoute";
 
 class InfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -14,6 +15,7 @@ class InfraStack extends cdk.Stack {
     /* CREATE RESOURCES */
     /* Lambda */
     const appLambda = new AppLambda(this, "appLambda");
+    const appLambdaUrl = appLambda.urlObj.url;
 
     /* Websocket */
     const ws = new WsApi(this, "roomWs", { name: "TalkiRoomWs" });
@@ -41,15 +43,35 @@ class InfraStack extends cdk.Stack {
       responseBody: "Invalid action. Please try with a different action.",
     });
 
+    // allowMemberInRoom route
+    new WsHttpRoute(this, "roomWsAllowMemberInRoomRoute", {
+      apiId: ws.apiResource.attrApiId,
+      routeKey: "allowMemberInRoom",
+      httpEndpoint: {
+        method: "POST",
+        uri: `${appLambdaUrl}room/ws/allowMemberInRoom`, // lambda url ends with '/'
+      },
+      bodyTemplate: `
+{
+  "connectionId": "$context.connectionId",
+  "isAllowedInRoom": $input.json('$.payload.isAllowedInRoom'),
+  "newMemberId": $input.json('$.payload.newMemberId'),
+  "roomId": $input.json('$.payload.roomId')
+}
+`,
+      isResponseRequired: false,
+    });
+
     /* WIRING */
     // lambda
     appLambda.addWsUrl(wsEndpoint);
+    appLambda.addWsReplyPermission(ws);
     roomWsAuthorizer.addWsUrl(wsEndpoint);
-    roomWsAuthorizer.addWsPermission(ws);
+    roomWsAuthorizer.addWsReplyPermission(ws);
 
     /* OUTPUTS */
     new CfnOutput(this, "BackendLambdaUrl", {
-      value: appLambda.urlObj.url,
+      value: appLambdaUrl,
       description: "The https endpoint where your app is hosted",
     });
     new CfnOutput(this, "RoomWsUrl", {

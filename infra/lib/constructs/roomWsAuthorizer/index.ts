@@ -28,6 +28,7 @@ class RoomWsAuthorizer extends Construct {
       code: lambda.Code.fromAsset(codeLocalUri),
       handler: "index.handler",
       environment: ROOM_WS_AUTHORIZER_ENV_VARS,
+      memorySize: 512,
     });
 
     const { region, account } = Stack.of(this);
@@ -58,7 +59,7 @@ class RoomWsAuthorizer extends Construct {
     this.authFn.addEnvironment(wsEnvVarKey, wsUrl);
   }
 
-  addWsPermission(ws: WsApi) {
+  addWsReplyPermission(ws: WsApi) {
     const thisStack = Stack.of(this);
     const wsReplyPermission = getWsReplyPermission(thisStack, ws);
     this.authFn.addToRolePolicy(wsReplyPermission);
