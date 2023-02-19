@@ -3,13 +3,15 @@ import makeAuthNonceController from "@appLambda/controllers/auth/nonce/index.con
 import authStatusController from "@appLambda/controllers/auth/status";
 import { Router } from "express";
 import DatabaseClients from "@appLambda/services/db";
+import authLogoutController from "@appLambda/controllers/auth/logout/index.controller";
 
 function makeAuthRouter(databaseClients: DatabaseClients) {
   const authRouter = Router();
 
   authRouter.get("/status", authStatusController);
   authRouter.get("/nonce", makeAuthNonceController(databaseClients));
-  authRouter.put("/login", makeAuthLoginController(databaseClients));
+  authRouter.post("/login", makeAuthLoginController(databaseClients));
+  authRouter.post("/logout", authLogoutController);
 
   return authRouter;
 }
