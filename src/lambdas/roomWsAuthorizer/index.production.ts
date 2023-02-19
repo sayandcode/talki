@@ -1,6 +1,7 @@
 import { createConnection } from "mongoose";
 import { APIGatewayRequestAuthorizerHandler as Handler } from "aws-lambda";
 import makeRoomModel from "models/Room/index.model";
+import reuseDbConnections from "@utils/reuseDbConnections";
 import ROOM_WS_AUTHORIZER_ENV_VARS from "./env";
 import generateAuthPolicy from "./utils/generateAuthPolicy";
 import parseEventData from "./utils/eventData";
@@ -11,11 +12,11 @@ const mongoUrl = ROOM_WS_AUTHORIZER_ENV_VARS.MONGODB_CONNECTION_URL;
 const mongoClient = createConnection(mongoUrl);
 
 // eslint-disable-next-line import/prefer-default-export
-export const handler: Handler = async ({
-  queryStringParameters,
-  methodArn,
-  requestContext,
-}) => {
+export const handler: Handler = async (
+  { queryStringParameters, methodArn, requestContext },
+  context
+) => {
+  await reuseDbConnections(context, mongoClient);
   const rejectedAuthPolicy = generateAuthPolicy(false, methodArn);
 
   // parse data from request events
