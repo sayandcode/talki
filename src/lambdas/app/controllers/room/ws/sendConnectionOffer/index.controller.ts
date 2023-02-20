@@ -1,50 +1,35 @@
-import APP_ENV_VARS from "@appLambda/env";
 import { ApiError } from "@appLambda/middleware/errors";
 import DatabaseClients from "@appLambda/services/db";
-import WsBackend from "@utils/WsBackend";
-import RoomModelValidators from "models/Room/index.validator";
-import { getIsMemberConnected } from "models/Room/schemas/member/helperFns";
-import { z } from "zod";
+import { getIsMemberAllowed } from "models/Room/schemas/member/helperFns";
 import makeRoomWsController from "../_utils/makeRoomWsController";
-import { WebRtcValidators } from "../_utils/webRtc";
-
-const BodyValidator = z.object({
-  newMemberId: RoomModelValidators.memberId,
-  offerSdp: WebRtcValidators.sdp,
-});
-
-const wsUrl = APP_ENV_VARS.ROOM_WS_URL;
-const wsBackend = new WsBackend(wsUrl);
+import RoomWsSendConnectionOfferBodyValidator from "./_utils/bodyValidator";
+import sendOffer from "./_utils/sendOffer";
 
 function makeRoomWsSendConnectionOffer(databaseClients: DatabaseClients) {
   return makeRoomWsController(
     databaseClients,
-    BodyValidator,
+    RoomWsSendConnectionOfferBodyValidator,
     async (reqData, res, next) => {
       const {
-        requestingMember,
+        requestingMember: offeringMember,
         requestedRoom,
         reqBody: { newMemberId, offerSdp },
       } = reqData;
 
-      const offererMemberId = requestingMember.memberId;
-
-      const newMember = requestedRoom.members.get(newMemberId);
-      if (!(newMember && getIsMemberConnected(newMember))) {
-        next(new ApiError(400, "The specified new member is invalid"));
+      // are both members allowed in room?
+      const answeringMember = requestedRoom.members.get(newMemberId);
+      const isAnswererAllowedInRoom =
+        answeringMember && getIsMemberAllowed(answeringMember);
+      const isBothMembersAllowedInRoom =
+        getIsMemberAllowed(offeringMember) && isAnswererAllowedInRoom;
+      if (!isBothMembersAllowedInRoom) {
+        const msg =
+          "This message can only be sent between allowed members of room";
+        next(new ApiError(403, msg));
         return;
       }
-      const newMemberConnectionId = newMember.connectionId;
 
-      const msg = {
-        action: "sendConnectionAnswer",
-        payload: {
-          offererMemberId,
-          offerSdp,
-        },
-      };
-      await wsBackend.sendMsgToWs(newMemberConnectionId, msg);
-
+      await sendOffer({ offeringMember, answeringMember, offerSdp });
       res.status(200).send("Offer sent");
     }
   );
