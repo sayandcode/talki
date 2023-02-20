@@ -1,11 +1,17 @@
 import { z } from "zod";
 
 type WebRtcTypes = {
-  Sdp: string;
+  Sdp: {
+    type: string;
+    sdp: string;
+  };
 };
 
 const WebRtcValidators = {
-  sdp: z.string() satisfies z.ZodType<WebRtcTypes["Sdp"]>,
+  sdp: z.object({
+    type: z.string(),
+    sdp: z.string(),
+  }) satisfies z.ZodType<WebRtcTypes["Sdp"]>,
 };
 
 export { WebRtcTypes, WebRtcValidators };

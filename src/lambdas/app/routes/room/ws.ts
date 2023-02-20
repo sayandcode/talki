@@ -1,7 +1,7 @@
 import { Router } from "express";
 import DatabaseClients from "@appLambda/services/db";
 import makeRoomWsAllowMemberInRoomController from "@appLambda/controllers/room/ws/allowMemberInRoom/index.controller";
-import makeRoomWsSendConnectionOffer from "@appLambda/controllers/room/ws/sendConnectionOffer/index.controller";
+import makeRoomWsSendSdpController from "@appLambda/controllers/room/ws/sendSdp/index.controller";
 
 /**
  * This router is unauthed. For authorization, check the connectionId in the body.
@@ -15,10 +15,7 @@ function makeRoomWsRouter(databaseClients: DatabaseClients): Router {
     "/allowMemberInRoom",
     makeRoomWsAllowMemberInRoomController(databaseClients)
   );
-  roomWsRouter.post(
-    "/sendConnectionOffer",
-    makeRoomWsSendConnectionOffer(databaseClients)
-  );
+  roomWsRouter.post("/sendSdp", makeRoomWsSendSdpController(databaseClients));
 
   return roomWsRouter;
 }

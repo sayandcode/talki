@@ -38,7 +38,7 @@ class AdminNotifier {
   private get msg() {
     const { memberId, userData } = this.requestingMember;
     return {
-      action: "allowMemberInRoom",
+      action: "askEntryPermission",
       payload: {
         newMemberId: memberId,
         userData,

@@ -34,7 +34,7 @@ async function sendPromptsToOpenNewConnection(
   const connectionToNewConnectionPrompt = async (
     connectionId: ConnectionId
   ) => {
-    const msg = { action: "sendConnectionOffer", payload: { newMemberId } };
+    const msg = { action: "promptSdp", payload: { newMemberId } };
     await wsBackendForApp.sendMsgToWs(connectionId, msg);
   };
   const newConnectionPrompts = connectionIds.map(
