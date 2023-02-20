@@ -1,10 +1,6 @@
-import APP_ENV_VARS from "@appLambda/env";
-import WsBackend from "@utils/WsBackend";
+import wsBackendForApp from "@appLambda/utils/wsBackend";
 import { AllowedRoomMember } from "models/Room/schemas/member/index.schema";
 import { WebRtcTypes } from "../../_utils/webRtc";
-
-const wsUrl = APP_ENV_VARS.ROOM_WS_URL;
-const wsBackend = new WsBackend(wsUrl);
 
 async function sendRoomWsRTCOffer({
   offeringMember: requestingMember,
@@ -17,7 +13,7 @@ async function sendRoomWsRTCOffer({
 }) {
   const newMemberConnectionId = newMember.connectionId;
   const msg = getMsg(requestingMember, offerSdp);
-  await wsBackend.sendMsgToWs(newMemberConnectionId, msg);
+  await wsBackendForApp.sendMsgToWs(newMemberConnectionId, msg);
 }
 
 function getMsg(

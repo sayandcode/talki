@@ -1,5 +1,4 @@
-import APP_ENV_VARS from "@appLambda/env";
-import WsBackend from "@utils/WsBackend";
+import wsBackendForApp from "@appLambda/utils/wsBackend";
 import { RoomDocument } from "models/Room/index.model";
 import { RoomMember } from "models/Room/schemas/member/index.schema";
 
@@ -28,9 +27,6 @@ function getOtherMembersConnectionIds(
   return otherMembers.map((member) => member.connectionId);
 }
 
-const wsUrl = APP_ENV_VARS.ROOM_WS_URL;
-const wsBackend = new WsBackend(wsUrl);
-
 async function sendPromptsToOpenNewConnection(
   connectionIds: ConnectionId[],
   newMemberId: RoomMember["memberId"]
@@ -39,7 +35,7 @@ async function sendPromptsToOpenNewConnection(
     connectionId: ConnectionId
   ) => {
     const msg = { action: "sendConnectionOffer", payload: { newMemberId } };
-    await wsBackend.sendMsgToWs(connectionId, msg);
+    await wsBackendForApp.sendMsgToWs(connectionId, msg);
   };
   const newConnectionPrompts = connectionIds.map(
     connectionToNewConnectionPrompt
