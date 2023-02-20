@@ -1,8 +1,13 @@
 import { SessionData } from "express-session";
 import { Schema } from "mongoose";
-import { generateRoomMemberData, getIsMemberAllowed } from "./member/helperFns";
+import {
+  generateRoomMemberData,
+  getIsMemberAllowed,
+  getIsMemberConnected,
+} from "./member/helperFns";
 import roomMemberSchema, {
   AllowedRoomMember,
+  ConnectedRoomMember,
   RoomMember,
 } from "./member/index.schema";
 
@@ -61,9 +66,15 @@ const roomSchema = new Schema(
        * With the help of this function, we authenticate a user based on the connectionId.
        * This is legit, cause the connectionId is only known by the API gateway and the backend app.
        */
-      getMemberFromConnectionId(connectionId: ConnectionId) {
+      getMemberFromConnectionId(
+        connectionId: ConnectionId
+      ): ConnectedRoomMember | null {
         for (const member of this.members.values()) {
-          if (member.connectionId === connectionId) return member;
+          if (
+            getIsMemberConnected(member) &&
+            member.connectionId === connectionId
+          )
+            return member;
         }
         return null;
       },
