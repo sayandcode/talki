@@ -81,6 +81,25 @@ class InfraStack extends cdk.Stack {
       isResponseRequired: false,
     });
 
+    // sendIceCandidate route
+    new WsHttpRoute(this, "roomWsSendIceCandidateRoute", {
+      apiId: ws.apiResource.attrApiId,
+      routeKey: "sendIceCandidate",
+      httpEndpoint: {
+        method: "POST",
+        uri: `${appLambdaUrl}room/ws/sendIceCandidate`, // lambda url ends with '/'
+      },
+      bodyTemplate: `
+{
+  "connectionId": "$context.connectionId",
+  "receiverMemberId": $input.json('$.payload.receiverMemberId'),
+  "roomId": $input.json('$.payload.roomId'),
+  "stringifiedIceCandidate": $input.json('$.payload.stringifiedIceCandidate')
+}
+`,
+      isResponseRequired: false,
+    });
+
     /* WIRING */
     // lambda
     appLambda.addWsUrl(wsEndpoint);

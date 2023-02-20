@@ -3,7 +3,7 @@ import DatabaseClients from "@appLambda/services/db";
 import { getIsMemberAllowed } from "models/Room/schemas/member/helperFns";
 import makeRoomWsController from "../_utils/makeRoomWsController";
 import RoomWsSendSdpBodyValidator from "./_utils/bodyValidator";
-import sendSdp from "./_utils/sendSdp";
+import sendSdp from "./_utils/sendWsBackend";
 
 function makeRoomWsSendSdpController(databaseClients: DatabaseClients) {
   return makeRoomWsController(
