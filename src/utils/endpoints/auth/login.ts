@@ -7,7 +7,7 @@ type AuthLoginEndpoint = {
 
 const authLoginEndpoint = {
   url: `${backendBaseUrl}/auth/login`,
-  method: "PUT",
+  method: "POST",
   headers: new Headers({
     "content-type": "application/json",
   }),
