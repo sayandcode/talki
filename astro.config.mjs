@@ -9,7 +9,7 @@ export default defineConfig({
       "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
       "Content-Security-Policy": CSPConfigStr,
       "Permissions-Policy":
-        "picture-in-picture=(), geolocation=(), camera=(), microphone=()",
+        "picture-in-picture=(), geolocation=(), camera=(self), microphone=()",
       "X-Frame-Options": "DENY",
     },
   },
