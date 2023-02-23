@@ -3,7 +3,7 @@ import APP_ENV_VARS from "@appLambda/env";
 import createRedisStore from "connect-redis";
 import DatabaseClients from "@appLambda/services/db";
 
-const { SESSION_SECRET, BACKEND_URL, FRONTEND_URL } = APP_ENV_VARS;
+const { SESSION_SECRET } = APP_ENV_VARS;
 
 function makeSessionMiddlewareArr(databaseClients: DatabaseClients) {
   const RedisStore = createRedisStore(session);
@@ -13,9 +13,8 @@ function makeSessionMiddlewareArr(databaseClients: DatabaseClients) {
     store: new RedisStore({ client: databaseClients.redisClient }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // 1 day
-      secure: [FRONTEND_URL, BACKEND_URL].every((url) =>
-        url.startsWith("https:")
-      ), // set to true when hosted on https
+      secure: true, // set to true when hosted on https
+      sameSite: 'none'
     },
     saveUninitialized: false,
     resave: false,

@@ -4,7 +4,13 @@ import APP_ENV_VARS from "@appLambda/env";
 
 // cors
 const corsOptions: CorsOptions = {
-  origin: APP_ENV_VARS.FRONTEND_URL,
+  origin: (origin, callback) => {
+    const list = [APP_ENV_VARS.FRONTEND_URL, "https://localhost:3000"];
+    const isOriginInList = list.includes(origin || "");
+    if (!origin || isOriginInList)
+      callback(null, true); // allow api gateway to access w/o origin set
+    else callback(new Error("Not allowed by CORS"));
+  },
   credentials: true,
 };
 const corsMiddleware = cors(corsOptions);

@@ -1,10 +1,7 @@
-import APP_ENV_VARS from "@appLambda/env";
 import makeAsyncController from "@appLambda/utils/reqRes/asyncController";
 import DatabaseClients from "@appLambda/services/db";
 import generateNonce from "@utils/generateNonce";
 import { setNonceInDb } from "./saveNonce";
-
-const { BACKEND_URL, FRONTEND_URL } = APP_ENV_VARS;
 
 const NONCE_TIMEOUT = 1000 * 60 * 2; // 2 min
 const COOKIE_NONCE_ID_KEY = "nonceId";
@@ -22,9 +19,8 @@ function makeAuthNonceController(databaseClients: DatabaseClients) {
     res.cookie(COOKIE_NONCE_ID_KEY, nonceId, {
       httpOnly: true,
       maxAge: NONCE_TIMEOUT,
-      secure: [FRONTEND_URL, BACKEND_URL].every((url) =>
-        url.startsWith("https:")
-      ), // set to true when hosted on https
+      secure: true, // set to true when hosted on https
+      sameSite: 'none'
     });
 
     res.status(200).json({ nonce });

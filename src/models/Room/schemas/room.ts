@@ -11,7 +11,7 @@ import roomMemberSchema, {
   RoomMember,
 } from "./member/index.schema";
 
-const ROOM_TIMEOUT = 15 * 60; // seconds
+const ROOM_TIMEOUT = 5 * 60; // seconds
 
 type MemberId = RoomMember["memberId"];
 type Nonce = NonNullable<RoomMember["nonce"]>;

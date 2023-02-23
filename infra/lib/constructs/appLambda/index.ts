@@ -28,10 +28,6 @@ class AppLambda extends Construct {
 
     this.urlObj = this.fn.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
-      cors: {
-        allowedOrigins: ["*"],
-        allowCredentials: true,
-      },
     });
   }
 
