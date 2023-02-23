@@ -1,4 +1,7 @@
 type RoomId = string;
+type RoomWsUrl = string;
+type RoomMemberId = string;
+type RoomNonce = string;
+type RoomExpireAt = string;
 
-// eslint-disable-next-line import/prefer-default-export
-export type { RoomId };
+export type { RoomId, RoomWsUrl, RoomMemberId, RoomNonce, RoomExpireAt };

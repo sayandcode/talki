@@ -1,7 +1,7 @@
 import backendBaseUrl from "..";
 
 type RoomCreateEndpoint = {
-  body: {},
+  body: {};
   response: {
     wsUrl: string;
     roomId: string;
