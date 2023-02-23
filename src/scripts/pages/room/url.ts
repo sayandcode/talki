@@ -5,5 +5,10 @@ function getRoomIdFromUrl(): RoomId | null {
   const roomId = currUrl.searchParams.get("roomId");
   return roomId;
 }
-// eslint-disable-next-line import/prefer-default-export
-export { getRoomIdFromUrl };
+
+function setRoomIdInUrl(roomId: RoomId) {
+  const roomIdParam = new URLSearchParams({ roomId });
+  window.history.pushState(null, "", `?${roomIdParam}`);
+}
+
+export { getRoomIdFromUrl, setRoomIdInUrl };

@@ -4,7 +4,9 @@ import roomCreateEndpoint, {
 import roomJoinEndpoint, { RoomJoinEndpoint } from "utils/endpoints/room/join";
 import backendFetch from "utils/functions/backendFetch";
 import type { RoomId } from "utils/types/Room";
-import { getRoomIdFromUrl } from "../url";
+import setRoomIdOnPage from "../pageManip/roomId";
+import addStreamContainer from "../pageManip/streamContainer";
+import { getRoomIdFromUrl, setRoomIdInUrl } from "../url";
 import connectRoomWs from "./connectRoomWs";
 
 async function startSession() {
@@ -13,15 +15,10 @@ async function startSession() {
   const localStream = await navigator.mediaDevices.getUserMedia({
     video: true,
   });
-
-  const localVidEl = document.createElement("video");
-  localVidEl.height = 100;
-  localVidEl.width = 100;
-  localVidEl.autoplay = true;
-  localVidEl.srcObject = localStream;
-  document.getElementById("streams-container")?.appendChild(localVidEl);
+  addStreamContainer(localStream);
 
   if (roomId) {
+    setRoomIdOnPage(roomId);
     joinExistingCall(roomId);
     return;
   }
@@ -42,6 +39,8 @@ async function startNewCall() {
   const res = await backendFetch(url, { method });
   const { wsUrl, roomId, memberId, nonce, expireAt } =
     (await res.json()) as RoomCreateEndpoint["response"];
+  setRoomIdInUrl(roomId);
+  setRoomIdOnPage(roomId);
   await connectRoomWs({ wsUrl, roomId, memberId, nonce, expireAt });
 }
 

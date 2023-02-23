@@ -1,13 +1,18 @@
 ---
 import PushToTalkBtn from "components/room/PushToTalkBtn.astro";
 import BasicHTMLLayout from "layouts/BasicHTMLLayout.astro";
+import { ROOM_ID_CONTAINER_ID } from "scripts/pages/room/pageManip/roomId";
+import { STREAM_CONTAINERS_CONTAINER_ID } from "scripts/pages/room/pageManip/streamContainer";
 ---
 
 <BasicHTMLLayout title="My private room">
   <div class="h-screen flex flex-col justify-center items-center">
     <h1 class="text-4xl font-bold mb-4">My chat room</h1>
+    <div class="text-xl font-mono">
+      Room ID: <span id={ROOM_ID_CONTAINER_ID} class="font-bold"></span>
+    </div>
     <PushToTalkBtn id="push-to-talk-btn" />
-    <div id="streams-container"></div>
+    <div id={STREAM_CONTAINERS_CONTAINER_ID}></div>
   </div>
 </BasicHTMLLayout>
 <script>
