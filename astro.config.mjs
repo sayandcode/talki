@@ -13,4 +13,6 @@ export default defineConfig({
       "X-Frame-Options": "DENY",
     },
   },
+  site: "https://sayandcode.github.io",
+  base: "/talki",
 });

@@ -21,13 +21,15 @@ import Layout from "layouts/BasicHTMLLayout.astro";
     </form>
     <div class="font-sans">or</div>
     <a
-      href="/room"
+      href="/talki/room"
       class="bg-gray-50 active:bg-gray-400 hover:bg-gray-200 px-2 py-1 rounded font-mono"
       >Create new Chat Room</a
     >
   </main>
 </Layout>
 <script>
+  import { redirectToInternalUrl } from "utils/functions/redirects";
+
   const joinRoomForm = document.getElementById(
     "join-room-form"
     // eslint-disable-next-line prettier/prettier
@@ -41,7 +43,7 @@ import Layout from "layouts/BasicHTMLLayout.astro";
       throw new Error("Couldn't get roomId from form");
 
     const searchParams = new URLSearchParams({ roomId });
-    window.location.href = `room?${searchParams}`;
+    redirectToInternalUrl(`/room?${searchParams}`);
   };
 
   joinRoomForm?.addEventListener("submit", joinRoom);

@@ -8,7 +8,7 @@ import backendFetch from "./backendFetch";
 async function redirectIfLoggedIn(newUrl: string) {
   const isLoggedIn = await fetchIsLoggedIn();
   if (isLoggedIn) {
-    window.location.href = newUrl;
+    redirectToInternalUrl(newUrl);
     return true;
   }
   return false;
@@ -20,10 +20,14 @@ async function redirectIfLoggedIn(newUrl: string) {
 async function redirectIfNotLoggedIn(newUrl: string) {
   const isLoggedIn = await fetchIsLoggedIn();
   if (!isLoggedIn) {
-    window.location.href = newUrl;
+    redirectToInternalUrl(newUrl);
     return true;
   }
   return false;
+}
+
+function redirectToInternalUrl(newUrl: string) {
+  window.location.href = `/talki${newUrl}`;
 }
 
 async function fetchIsLoggedIn() {
@@ -33,4 +37,4 @@ async function fetchIsLoggedIn() {
   return isLoggedIn;
 }
 
-export { redirectIfNotLoggedIn, redirectIfLoggedIn };
+export { redirectIfNotLoggedIn, redirectIfLoggedIn, redirectToInternalUrl };
