@@ -1,6 +1,7 @@
 ---
 import PushToTalkBtn from "components/room/PushToTalkBtn.astro";
 import BasicHTMLLayout from "layouts/BasicHTMLLayout.astro";
+import EntryPermissionDialog from "components/room/EntryPermissionDialog.astro";
 import { ROOM_ID_CONTAINER_ID } from "scripts/pages/room/pageManip/roomId";
 import { STREAM_CONTAINERS_CONTAINER_ID } from "scripts/pages/room/pageManip/streamContainer";
 ---
@@ -14,6 +15,7 @@ import { STREAM_CONTAINERS_CONTAINER_ID } from "scripts/pages/room/pageManip/str
     <PushToTalkBtn id="push-to-talk-btn" />
     <div id={STREAM_CONTAINERS_CONTAINER_ID}></div>
   </div>
+  <EntryPermissionDialog />
 </BasicHTMLLayout>
 <script>
   import { redirectIfNotLoggedIn } from "utils/functions/redirects";

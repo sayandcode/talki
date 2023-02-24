@@ -5,6 +5,13 @@ import type {
   RoomWsUrl,
   RoomExpireAt,
 } from "utils/types/Room";
+import { z } from "zod";
+import askEntryPermissionToUser from "./askEntryPermission";
+
+const MessageValidator = z.object({
+  action: z.string(),
+  payload: z.unknown(),
+}) satisfies z.ZodSchema<{ action: string; payload?: unknown }>;
 
 async function connectRoomWs({
   wsUrl,
@@ -30,13 +37,12 @@ async function connectRoomWs({
   setTimeout(() => roomWs.close(), timeLeft);
 
   roomWs.addEventListener("message", (e) => {
-    const msg = JSON.parse(e.data) as { action: string; payload: any };
+    const msg = MessageValidator.parse(JSON.parse(e.data));
     console.log("Message received from websocket", msg);
 
     switch (msg.action) {
       case "askEntryPermission":
-        // ask user if you want to let this new person in
-        // send 'allowMemberInRoom' action to websocket
+        askEntryPermissionToUser(msg.payload);
         break;
 
       case "promptSdp":
