@@ -26,9 +26,13 @@ async function startSession() {
 }
 
 async function joinExistingCall(roomId: RoomId) {
-  const { url, method } = roomJoinEndpoint;
+  const { url, headers, method } = roomJoinEndpoint;
   const body: RoomJoinEndpoint["body"] = { roomId };
-  const res = await backendFetch(url, { method, body: JSON.stringify(body) });
+  const res = await backendFetch(url, {
+    method,
+    headers,
+    body: JSON.stringify(body),
+  });
   const { wsUrl, memberId, nonce, expireAt } =
     (await res.json()) as RoomJoinEndpoint["response"];
   await connectRoomWs({ wsUrl, roomId, memberId, nonce, expireAt });

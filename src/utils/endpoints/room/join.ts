@@ -15,6 +15,9 @@ type RoomJoinEndpoint = {
 
 const roomJoinEndpoint = {
   url: `${backendBaseUrl}/room/join`,
+  headers: new Headers({
+    "content-type": "application/json",
+  }),
   method: "POST",
 } as const;
 

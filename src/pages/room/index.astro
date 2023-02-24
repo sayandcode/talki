@@ -21,6 +21,13 @@ import { STREAM_CONTAINERS_CONTAINER_ID } from "scripts/pages/room/pageManip/str
   import { redirectIfNotLoggedIn } from "utils/functions/redirects";
   import startSession from "scripts/pages/room/startSession";
 
-  const isRedirected = await redirectIfNotLoggedIn("/login?redirectTo=/room");
+  const isRedirected = await redirectIfNotLoggedIn(getRedirectPath());
   if (!isRedirected) startSession();
+
+  function getRedirectPath() {
+    const currUrl = new URL(document.location.href);
+    const currPath = `/room${currUrl.search}`;
+    const redirectPath = `/login?redirectTo=${currPath}`;
+    return redirectPath;
+  }
 </script>
