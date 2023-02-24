@@ -5,13 +5,9 @@ import type {
   RoomWsUrl,
   RoomExpireAt,
 } from "utils/types/Room";
-import { z } from "zod";
-import askEntryPermissionToUser from "./askEntryPermission";
-
-const MessageValidator = z.object({
-  action: z.string(),
-  payload: z.unknown(),
-}) satisfies z.ZodSchema<{ action: string; payload?: unknown }>;
+import setupRoomWsAutoClose from "./close";
+import setupRoomWsEventListeners from "./events";
+import getFullRoomWsUrl from "./url";
 
 async function connectRoomWs({
   wsUrl,
@@ -26,41 +22,11 @@ async function connectRoomWs({
   nonce: RoomNonce;
   expireAt: RoomExpireAt;
 }) {
-  const authParams = new URLSearchParams({ roomId, memberId, nonce });
-  const fullRoomWsUrl = `${wsUrl}?${authParams.toString()}`;
+  const fullRoomWsUrl = getFullRoomWsUrl({ wsUrl, roomId, memberId, nonce });
   const roomWs = new WebSocket(fullRoomWsUrl);
 
-  // auto close the websocket
-  const now = new Date();
-  const roomExpiryTime = new Date(expireAt);
-  const timeLeft = roomExpiryTime.getTime() - now.getTime();
-  setTimeout(() => roomWs.close(), timeLeft);
-
-  roomWs.addEventListener("message", (e) => {
-    const msg = MessageValidator.parse(JSON.parse(e.data));
-    console.log("Message received from websocket", msg);
-
-    switch (msg.action) {
-      case "askEntryPermission":
-        askEntryPermissionToUser(msg.payload);
-        break;
-
-      case "promptSdp":
-        // create new connection and send the offer to websocket
-        break;
-
-      case "sendSdp":
-        // create an answer for the offer, and send to websocket
-        break;
-
-      case "sendIceCandidate":
-        // add ice candidate to respective peerconnection
-        break;
-
-      default:
-        throw new Error("Unexpected websocket action");
-    }
-  });
+  setupRoomWsAutoClose(roomWs, expireAt);
+  setupRoomWsEventListeners(roomWs, { roomId, expireAt });
 }
 
 export default connectRoomWs;

@@ -1,5 +1,5 @@
 import showEntryPermissionDialog from "scripts/components/room/EntryPermissionDialog";
-import RoomValidators from "utils/types/Room";
+import RoomValidators, { RoomId } from "utils/types/Room";
 import { z } from "zod";
 
 const PayloadValidator = z.object({
@@ -11,7 +11,15 @@ const PayloadValidator = z.object({
  * we are the admin for this room. Hence you can reply confidently whether
  * or not you wish to add the specified member in the room
  */
-function askEntryPermissionToUser(payload: unknown) {
+function askEntryPermissionToUser({
+  payload,
+  roomWs,
+  roomId,
+}: {
+  payload: unknown;
+  roomWs: WebSocket;
+  roomId: RoomId;
+}) {
   const validation = PayloadValidator.safeParse(payload);
   if (!validation.success)
     throw new Error(
@@ -20,9 +28,15 @@ function askEntryPermissionToUser(payload: unknown) {
 
   const { userData, newMemberId } = validation.data;
   showEntryPermissionDialog(userData, (isAllowed) => {
-    const decision = isAllowed ? "allowed" : "denied";
-    const msg = `Admin ${decision} the user`;
-    console.log(msg, newMemberId); // send this permission to the websocket
+    const msg = {
+      action: "allowMemberInRoom",
+      payload: {
+        isAllowedInRoom: isAllowed,
+        newMemberId,
+        roomId,
+      },
+    };
+    roomWs.send(JSON.stringify(msg));
   });
 }
 
