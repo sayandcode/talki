@@ -14,7 +14,8 @@
     "lint": "eslint . --ignore-path=.gitignore --max-warnings=0",
     "deploy": "NODE_ENV=production bash devOps/deploy.sh",
     "undeploy": "NODE_ENV=production bash devOps/undeploy.sh",
-    "diff": "NODE_ENV=production bash devOps/diff.sh"
+    "diff": "NODE_ENV=production bash devOps/diff.sh",
+    "bootstrap": "NODE_ENV=production bash devOps/bootstrap.sh"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.110",
