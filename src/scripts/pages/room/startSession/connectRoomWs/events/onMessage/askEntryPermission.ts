@@ -20,13 +20,7 @@ function askEntryPermissionToUser({
   roomWs: WebSocket;
   roomId: RoomId;
 }) {
-  const validation = PayloadValidator.safeParse(payload);
-  if (!validation.success)
-    throw new Error(
-      "Entry permission payload did not contain the expected data"
-    );
-
-  const { userData, newMemberId } = validation.data;
+  const { userData, newMemberId } = PayloadValidator.parse(payload);
   showEntryPermissionDialog(userData, (isAllowed) => {
     const msg = {
       action: "allowMemberInRoom",
