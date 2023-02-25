@@ -1,19 +1,19 @@
 import type { RoomId, RoomMemberId } from "utils/types/Room";
 
 type ConnectionData = {
-  pc: RTCPeerConnection;
+  // eslint-disable-next-line no-undef
+  offerSdp: RTCSessionDescriptionInit;
   roomWs: WebSocket;
   newMemberId: RoomMemberId;
   roomId: RoomId;
 };
 
-async function sendOfferToRoomWs({
+function sendOfferToRoomWs({
   roomWs,
-  pc,
+  offerSdp,
   newMemberId,
   roomId,
 }: ConnectionData) {
-  const offerSdp = await pc.createOffer();
   const msg = getMsg({ roomId, offerSdp, newMemberId });
   roomWs.send(JSON.stringify(msg));
 }

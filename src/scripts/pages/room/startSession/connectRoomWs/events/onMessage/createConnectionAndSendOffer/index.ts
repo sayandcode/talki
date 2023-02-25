@@ -1,6 +1,6 @@
+import connectionsManager from "scripts/pages/room/startSession/connections/manager";
 import RoomValidators, { RoomId } from "utils/types/Room";
 import { z } from "zod";
-import createConnection from "./createConnection";
 import sendOfferToRoomWs from "./sendOffer";
 
 const PayloadValidator = z.object({
@@ -21,8 +21,9 @@ async function createConnectionAndSendOffer({
     throw new Error("'sendSdp' payload did not contain the expected data");
   const { newMemberId } = validation.data;
 
-  const pc = createConnection(newMemberId);
-  await sendOfferToRoomWs({ roomWs, pc, newMemberId, roomId });
+  const pc = connectionsManager.createConnection(newMemberId);
+  const offerSdp = await pc.createOffer();
+  sendOfferToRoomWs({ roomWs, offerSdp, newMemberId, roomId });
 }
 
 export default createConnectionAndSendOffer;

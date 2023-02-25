@@ -18,22 +18,23 @@ function getRoomWsOnMessageHandler({
   return (e: MessageEvent) => {
     const msg = MessageValidator.parse(JSON.parse(e.data));
     console.log("Message received from websocket", msg);
+    const { action, payload } = msg;
 
-    switch (msg.action) {
+    switch (action) {
       case "askEntryPermission":
         askEntryPermissionToUser({
-          payload: msg.payload,
+          payload,
           roomWs,
           roomId,
         });
         break;
 
       case "promptSdp":
-        createConnectionAndSendOffer({ payload: msg.payload, roomId, roomWs });
+        createConnectionAndSendOffer({ payload, roomId, roomWs });
         break;
 
       case "sendSdp":
-        // create an answer for the offer, and send to websocket
+        // handle received sdp
         break;
 
       case "sendIceCandidate":
