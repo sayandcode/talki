@@ -32,9 +32,7 @@ import Layout from "layouts/BasicHTMLLayout.astro";
 
   const joinRoomForm = document.getElementById(
     "join-room-form"
-    // eslint-disable-next-line prettier/prettier
   ) as HTMLFormElement;
-
   const joinRoom = (e: SubmitEvent) => {
     e.preventDefault();
     const formValues = new FormData(joinRoomForm);

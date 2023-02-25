@@ -2,17 +2,18 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
-    node: true,
   },
   settings: {
     "import/resolver": {
-      typescript: {
-        project: ["packages/tsconfig.json"],
+      node: {
+        paths: ["src"],
+        extensions: [".ts", ".astro"],
       },
     },
   },
   extends: [
     "airbnb-base",
+    "airbnb-typescript/base",
     "plugin:astro/recommended",
     "plugin:prettier/recommended",
   ],
@@ -20,18 +21,12 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module",
+    project: "./tsconfig.eslint.json",
+    extraFileExtensions: [".astro"],
   },
-  plugins: ["@typescript-eslint", "prettier"],
+  plugins: ["@typescript-eslint"],
   rules: {
-    "prettier/prettier": "error",
-    "no-use-before-define": ["error", { functions: false }],
-    "import/extensions": [
-      "error",
-      "ignorePackages",
-      {
-        ts: "never",
-      },
-    ],
+    "@typescript-eslint/no-use-before-define": ["error", { functions: false }],
   },
   overrides: [
     {
