@@ -15,7 +15,7 @@ async function startSession() {
   streamContainerManager.localStream = localStream;
 
   if (roomId) {
-    joinExistingCall(roomId);
+    await joinExistingCall(roomId);
     return;
   }
   await startNewCall();

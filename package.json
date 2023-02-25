@@ -7,7 +7,8 @@
     "rm": "yarn rimraf node_modules/",
     "ci": "yarn install --immutable --immutable-cache",
     "dev": "ENV=development env-cmd astro dev",
-    "build": "ENV=production env-cmd astro build",
+    "check-types": "ENV=production env-cmd astro check && tsc --noEmit",
+    "build": "yarn check-types && ENV=production env-cmd astro build",
     "start": "ENV=production env-cmd astro preview",
     "astro": "astro",
     "lint": "eslint . --ignore-path=.gitignore --max-warnings=5"

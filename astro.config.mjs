@@ -1,7 +1,8 @@
 import { defineConfig } from "astro/config";
+// eslint-disable-next-line import/no-unresolved
 import tailwind from "@astrojs/tailwind";
 import basicSsl from "@vitejs/plugin-basic-ssl";
-import CSPConfigStr from "./configHelpers/csp";
+import CSPConfigStr from "./configHelpers/csp.js";
 
 export default defineConfig({
   integrations: [tailwind()],

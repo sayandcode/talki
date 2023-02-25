@@ -15,7 +15,7 @@ function getRoomWsOnMessageHandler({
   roomWs: WebSocket;
   roomId: RoomId;
 }) {
-  return (e: MessageEvent) => {
+  return async (e: MessageEvent) => {
     const msg = MessageValidator.parse(JSON.parse(e.data));
     console.log("Message received from websocket", msg);
     const { action, payload } = msg;
@@ -30,7 +30,7 @@ function getRoomWsOnMessageHandler({
         break;
 
       case "promptSdp":
-        createConnectionAndSendOffer({ payload, roomId, roomWs });
+        await createConnectionAndSendOffer({ payload, roomId, roomWs });
         break;
 
       case "sendSdp":

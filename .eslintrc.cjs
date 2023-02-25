@@ -27,6 +27,7 @@ module.exports = {
   plugins: ["@typescript-eslint"],
   rules: {
     "@typescript-eslint/no-use-before-define": ["error", { functions: false }],
+    "@typescript-eslint/no-floating-promises": "error",
   },
   overrides: [
     {

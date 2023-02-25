@@ -4,6 +4,7 @@
     "src/**/*.astro",
     "src/**/*.ts",
     "configHelpers/*.js",
+    "astro.config.mjs",
     "./.eslintrc.cjs"
   ]
 }
