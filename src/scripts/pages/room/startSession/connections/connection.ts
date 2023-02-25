@@ -51,10 +51,26 @@ class RoomPeerConnection {
     };
   }
 
-  async createOffer() {
+  async createOffer(): Promise<RTCSessionDescription> {
     const offerSdp = await this._pc.createOffer();
     await this._pc.setLocalDescription(offerSdp);
+    // with current web standards, the createOffer returns an RTCSessionDescription, that's why there's a ts-ignore
+    // @ts-ignore
     return offerSdp;
+  }
+
+  async createAnswer(offerSdpObj: RTCSessionDescriptionInit) {
+    await this.setRemoteDescription(offerSdpObj);
+    const answerSdp = await this._pc.createAnswer();
+    return answerSdp;
+  }
+
+  async setRemoteDescription(offerSdpObj: RTCSessionDescriptionInit) {
+    if (this._pc.remoteDescription)
+      throw new Error(
+        "Remote description already set for this peer connection"
+      );
+    await this._pc.setRemoteDescription(offerSdpObj);
   }
 }
 

@@ -2,6 +2,7 @@ import type { RoomId } from "utils/types/Room";
 import { z } from "zod";
 import askEntryPermissionToUser from "./askEntryPermission";
 import createConnectionAndSendOffer from "./createConnectionAndSendOffer";
+import handleReceivedSdp from "./handleReceivedSdp";
 
 const MessageValidator = z.object({
   action: z.string(),
@@ -34,7 +35,7 @@ function getRoomWsOnMessageHandler({
         break;
 
       case "sendSdp":
-        // handle received sdp
+        await handleReceivedSdp({ payload, roomId, roomWs });
         break;
 
       case "sendIceCandidate":

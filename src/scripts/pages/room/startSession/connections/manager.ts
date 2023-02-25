@@ -10,6 +10,10 @@ class ConnectionsManager {
     this._list[newMemberId] = pc;
     return pc;
   }
+
+  getConnectionFromMemberId(memberId: RoomMemberId) {
+    return this._list[memberId];
+  }
 }
 
 const connectionsManager = new ConnectionsManager();
