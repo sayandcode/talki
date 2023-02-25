@@ -1,6 +1,7 @@
 import type { RoomId } from "utils/types/Room";
 import { z } from "zod";
-import askEntryPermissionToUser from "../../askEntryPermission";
+import askEntryPermissionToUser from "./askEntryPermission";
+import createConnectionAndSendOffer from "./createConnectionAndSendOffer";
 
 const MessageValidator = z.object({
   action: z.string(),
@@ -28,7 +29,7 @@ function getRoomWsOnMessageHandler({
         break;
 
       case "promptSdp":
-        // create new connection and send the offer to websocket
+        createConnectionAndSendOffer({ payload: msg.payload, roomId, roomWs });
         break;
 
       case "sendSdp":

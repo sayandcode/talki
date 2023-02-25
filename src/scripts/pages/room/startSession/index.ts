@@ -1,7 +1,7 @@
 import { redirectToInternalUrl } from "utils/functions/redirects";
 import type { RoomId } from "utils/types/Room";
 import setRoomIdOnPage from "../pageManip/roomId";
-import addStreamContainer from "../pageManip/streamContainer";
+import streamContainerManager from "../pageManip/streamContainer";
 import { getRoomIdFromUrl, setRoomIdInUrl } from "../url";
 import connectRoomWs from "./connectRoomWs";
 import { createRoom, tryJoinRoom } from "./room";
@@ -12,7 +12,7 @@ async function startSession() {
   const localStream = await navigator.mediaDevices.getUserMedia({
     video: true,
   });
-  addStreamContainer(localStream);
+  streamContainerManager.localStream = localStream;
 
   if (roomId) {
     joinExistingCall(roomId);
