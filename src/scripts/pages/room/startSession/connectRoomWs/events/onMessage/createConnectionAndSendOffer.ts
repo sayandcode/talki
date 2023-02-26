@@ -1,6 +1,7 @@
 import connectionsManager from "scripts/pages/room/startSession/connections/manager";
 import RoomValidators, { RoomId } from "utils/types/Room";
 import { z } from "zod";
+import getIceEventHandler from "./_utils/iceEventHandler";
 import sendSdpToRoomWs from "./_utils/sendSdp";
 
 const PayloadValidator = z.object({
@@ -17,7 +18,12 @@ async function createConnectionAndSendOffer({
   roomId: RoomId;
 }) {
   const { newMemberId } = PayloadValidator.parse(payload);
-  const pc = connectionsManager.createConnection(newMemberId);
+
+  const pc = connectionsManager.createConnection(
+    newMemberId,
+    getIceEventHandler({ roomWs, roomId, receiverMemberId: newMemberId })
+  );
+
   const offerSdp = await pc.createOffer();
   sendSdpToRoomWs({
     roomWs,

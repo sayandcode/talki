@@ -1,5 +1,6 @@
 import connectionsManager from "scripts/pages/room/startSession/connections/manager";
 import type { RoomId, RoomMemberId } from "utils/types/Room";
+import getIceEventHandler from "../_utils/iceEventHandler";
 import sendSdpToRoomWs from "../_utils/sendSdp";
 
 async function createNewPcAndAnswerItAndSendToRoomWs({
@@ -13,7 +14,10 @@ async function createNewPcAndAnswerItAndSendToRoomWs({
   roomId: RoomId;
   offerSdp: RTCSessionDescriptionInit;
 }) {
-  const pc = connectionsManager.createConnection(senderMemberId);
+  const pc = connectionsManager.createConnection(
+    senderMemberId,
+    getIceEventHandler({ roomWs, roomId, receiverMemberId: senderMemberId })
+  );
   const answerSdp = await pc.createAnswer(offerSdp);
   sendSdpToRoomWs({
     roomWs,

@@ -2,13 +2,28 @@
 import type { RoomMemberId } from "utils/types/Room";
 import streamContainerManager from "../../pageManip/streamContainer";
 
+type StringifiedIceCandidate = string;
+
 class RoomPeerConnection {
   private _pc: RTCPeerConnection;
+
+  static deserializeIceCandidate(
+    stringifiedIceCandidate: StringifiedIceCandidate
+  ) {
+    const iceObj = JSON.parse(stringifiedIceCandidate);
+    return new RTCIceCandidate(iceObj);
+  }
+
+  static serializeIceCandidate(
+    iceCandidate: RTCIceCandidate
+  ): StringifiedIceCandidate {
+    return JSON.stringify(iceCandidate);
+  }
 
   constructor(newMemberId: RoomMemberId) {
     this._pc = new RTCPeerConnection();
     this.setupConnectionTracks();
-    this.setupPeerConnectionEventListeners({ newMemberId });
+    this.setupTrackListener(newMemberId);
   }
 
   private setupConnectionTracks() {
@@ -22,19 +37,15 @@ class RoomPeerConnection {
       .forEach((track) => this._pc.addTrack(track, localStream));
   }
 
-  private setupPeerConnectionEventListeners({
-    newMemberId,
-  }: {
-    newMemberId: RoomMemberId;
-  }) {
+  private setupTrackListener(newMemberId: RoomMemberId) {
     this._pc.addEventListener(
       "track",
       RoomPeerConnection.getTrackEventHandler(newMemberId)
     );
-    this._pc.addEventListener(
-      "icecandidate",
-      RoomPeerConnection.getIceEventHandler()
-    );
+  }
+
+  setupIceListener(handler: (e: RTCPeerConnectionIceEvent) => void) {
+    this._pc.addEventListener("icecandidate", handler);
   }
 
   private static getTrackEventHandler(newMemberId: RoomMemberId) {
@@ -42,12 +53,6 @@ class RoomPeerConnection {
       const [remoteStream] = e.streams;
       if (!remoteStream) throw new Error("No stream available in track event");
       streamContainerManager.addRemoteStream(remoteStream, newMemberId);
-    };
-  }
-
-  private static getIceEventHandler() {
-    return () => {
-      console.log("Handle Ice candidate event");
     };
   }
 
@@ -72,6 +77,14 @@ class RoomPeerConnection {
       );
     await this._pc.setRemoteDescription(offerSdpObj);
   }
+
+  async setIceCandidate(stringifiedIceCandidate: StringifiedIceCandidate) {
+    const iceCandidate = RoomPeerConnection.deserializeIceCandidate(
+      stringifiedIceCandidate
+    );
+    await this._pc.addIceCandidate(iceCandidate);
+  }
 }
 
 export default RoomPeerConnection;
+export type { StringifiedIceCandidate };

@@ -12,10 +12,11 @@ class StreamContainerManager {
     {};
 
   private static createContainer() {
+    const streamContainersContainer = getElById(STREAM_CONTAINERS_CONTAINER_ID);
     const el = document.createElement("video");
-    el.height = 100;
-    el.width = 100;
+    el.classList.add("w-24", "h-24", "bg-black");
     el.autoplay = true;
+    streamContainersContainer.appendChild(el);
     return el;
   }
 
@@ -34,8 +35,7 @@ class StreamContainerManager {
 
   addRemoteStream(stream: MediaStream, memberId: RoomMemberId) {
     const streamContainer = StreamContainerManager.createContainer();
-    const streamContainersContainer = getElById(STREAM_CONTAINERS_CONTAINER_ID);
-    streamContainersContainer.appendChild(streamContainer);
+    streamContainer.srcObject = stream;
     this.remoteStreamContainers[memberId] = stream;
   }
 }

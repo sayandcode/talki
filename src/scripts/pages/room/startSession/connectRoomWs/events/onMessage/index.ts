@@ -1,5 +1,6 @@
 import type { RoomId } from "utils/types/Room";
 import { z } from "zod";
+import addIceCandidateToConnection from "./addIceCandidateToConnection";
 import askEntryPermissionToUser from "./askEntryPermission";
 import createConnectionAndSendOffer from "./createConnectionAndSendOffer";
 import handleReceivedSdp from "./handleReceivedSdp";
@@ -39,7 +40,7 @@ function getRoomWsOnMessageHandler({
         break;
 
       case "sendIceCandidate":
-        // add ice candidate to respective peerconnection
+        await addIceCandidateToConnection({ payload });
         break;
 
       default:
