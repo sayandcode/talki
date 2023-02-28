@@ -3,8 +3,8 @@ import type { RoomId } from "utils/types/Room";
 import setRoomIdOnPage from "../pageManip/roomId";
 import streamContainerManager from "../pageManip/streamContainer";
 import { getRoomIdFromUrl, setRoomIdInUrl } from "../url";
-import connectRoomWs from "./connectRoomWs";
-import { createRoom, tryJoinRoom } from "./room";
+import RoomWs from "./helperClasses/RoomWs";
+import { createRoom, tryJoinRoom } from "./room-http";
 
 async function startSession() {
   const roomId = getRoomIdFromUrl();
@@ -22,10 +22,12 @@ async function startSession() {
 }
 
 async function startNewCall() {
-  const { wsUrl, roomId, memberId, nonce, expireAt } = await createRoom();
+  const roomData = await createRoom();
+  const { roomId } = roomData;
   setRoomIdInUrl(roomId);
   setRoomIdOnPage(roomId);
-  await connectRoomWs({ wsUrl, roomId, memberId, nonce, expireAt });
+  // eslint-disable-next-line no-new
+  new RoomWs(roomData);
 }
 
 async function joinExistingCall(roomId: RoomId) {
@@ -35,7 +37,8 @@ async function joinExistingCall(roomId: RoomId) {
     return;
   }
   setRoomIdOnPage(roomId);
-  await connectRoomWs(joinAttempt.data);
+  // eslint-disable-next-line no-new
+  new RoomWs(joinAttempt.data);
 }
 
 export default startSession;

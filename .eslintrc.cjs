@@ -28,6 +28,8 @@ module.exports = {
   rules: {
     "@typescript-eslint/no-use-before-define": ["error", { functions: false }],
     "@typescript-eslint/no-floating-promises": "error",
+    "require-await": "error",
+    "no-void": ["error", { allowAsStatement: true }],
   },
   overrides: [
     {

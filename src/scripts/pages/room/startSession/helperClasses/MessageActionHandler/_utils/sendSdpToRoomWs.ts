@@ -1,8 +1,9 @@
 import type { RoomId, RoomMemberId } from "utils/types/Room";
+import type RoomWs from "../../RoomWs";
 
 type ConnectionData = {
   sdp: RTCSessionDescriptionInit;
-  roomWs: WebSocket;
+  roomWs: RoomWs["ws"];
   receiverMemberId: RoomMemberId;
   roomId: RoomId;
 };
@@ -13,20 +14,7 @@ function sendSdpToRoomWs({
   receiverMemberId,
   roomId,
 }: ConnectionData) {
-  const msg = getMsg({ roomId, sdp, receiverMemberId });
-  roomWs.send(JSON.stringify(msg));
-}
-
-function getMsg({
-  roomId,
-  sdp,
-  receiverMemberId,
-}: {
-  roomId: RoomId;
-  sdp: RTCSessionDescriptionInit;
-  receiverMemberId: RoomMemberId;
-}) {
-  return {
+  const msg = {
     action: "sendSdp",
     payload: {
       receiverMemberId,
@@ -34,6 +22,8 @@ function getMsg({
       sdp,
     },
   };
+
+  roomWs.send(JSON.stringify(msg));
 }
 
 export default sendSdpToRoomWs;

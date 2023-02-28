@@ -1,11 +1,9 @@
-/* eslint-disable no-underscore-dangle */
-import type { RoomMemberId } from "utils/types/Room";
 import streamContainerManager from "../../pageManip/streamContainer";
 
 type StringifiedIceCandidate = string;
 
 class RoomPeerConnection {
-  private _pc: RTCPeerConnection;
+  protected pc: RTCPeerConnection;
 
   static deserializeIceCandidate(
     stringifiedIceCandidate: StringifiedIceCandidate
@@ -20,10 +18,13 @@ class RoomPeerConnection {
     return JSON.stringify(iceCandidate);
   }
 
-  constructor(newMemberId: RoomMemberId) {
-    this._pc = new RTCPeerConnection();
+  private static rtcConfig: RTCConfiguration = {
+    iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+  };
+
+  constructor() {
+    this.pc = new RTCPeerConnection(RoomPeerConnection.rtcConfig);
     this.setupConnectionTracks();
-    this.setupTrackListener(newMemberId);
   }
 
   private setupConnectionTracks() {
@@ -34,55 +35,36 @@ class RoomPeerConnection {
       );
     localStream
       .getTracks()
-      .forEach((track) => this._pc.addTrack(track, localStream));
-  }
-
-  private setupTrackListener(newMemberId: RoomMemberId) {
-    this._pc.addEventListener(
-      "track",
-      RoomPeerConnection.getTrackEventHandler(newMemberId)
-    );
-  }
-
-  setupIceListener(handler: (e: RTCPeerConnectionIceEvent) => void) {
-    this._pc.addEventListener("icecandidate", handler);
-  }
-
-  private static getTrackEventHandler(newMemberId: RoomMemberId) {
-    return (e: RTCTrackEvent) => {
-      const [remoteStream] = e.streams;
-      if (!remoteStream) throw new Error("No stream available in track event");
-      streamContainerManager.addRemoteStream(remoteStream, newMemberId);
-    };
+      .forEach((track) => this.pc.addTrack(track, localStream));
   }
 
   async createOffer(): Promise<RTCSessionDescription> {
-    const offerSdp = await this._pc.createOffer();
-    await this._pc.setLocalDescription(offerSdp);
-    // with current web standards, the createOffer returns an RTCSessionDescription, that's why there's a ts-ignore
-    // @ts-ignore
-    return offerSdp;
+    const offerSdp = await this.pc.createOffer();
+    await this.pc.setLocalDescription(offerSdp);
+    // with current web standards, the createOffer returns an RTCSessionDescription, that's why there's a hard type-cast
+    return offerSdp as unknown as RTCSessionDescription;
   }
 
   async createAnswer(offerSdpObj: RTCSessionDescriptionInit) {
     await this.setRemoteDescription(offerSdpObj);
-    const answerSdp = await this._pc.createAnswer();
+    const answerSdp = await this.pc.createAnswer();
+    await this.pc.setLocalDescription(answerSdp);
     return answerSdp;
   }
 
   async setRemoteDescription(offerSdpObj: RTCSessionDescriptionInit) {
-    if (this._pc.remoteDescription)
+    if (this.pc.remoteDescription)
       throw new Error(
         "Remote description already set for this peer connection"
       );
-    await this._pc.setRemoteDescription(offerSdpObj);
+    await this.pc.setRemoteDescription(offerSdpObj);
   }
 
   async setIceCandidate(stringifiedIceCandidate: StringifiedIceCandidate) {
     const iceCandidate = RoomPeerConnection.deserializeIceCandidate(
       stringifiedIceCandidate
     );
-    await this._pc.addIceCandidate(iceCandidate);
+    await this.pc.addIceCandidate(iceCandidate);
   }
 }
 
