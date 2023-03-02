@@ -1,6 +1,7 @@
 ---
 import BasicHTMLLayout from "layouts/BasicHTMLLayout.astro";
 import EntryPermissionDialog from "components/room/EntryPermissionDialog.astro";
+import LeaveRoomBtn from "components/room/LeaveRoomBtn.astro";
 import SelfVideo from "components/room/SelfVideo.astro";
 import RemoteVideosGrid from "components/room/RemoteVideosGrid.astro";
 import RoomIdDisplay from "components/room/RoomIdDisplay.astro";
@@ -13,6 +14,7 @@ import RoomIdDisplay from "components/room/RoomIdDisplay.astro";
         <h1 class="text-4xl font-bold mb-4 px-2">My chat room</h1>
       </div>
       <RoomIdDisplay />
+      <LeaveRoomBtn />
     </div>
     <RemoteVideosGrid />
     <SelfVideo />
