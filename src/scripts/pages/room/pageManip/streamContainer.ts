@@ -11,13 +11,40 @@ class StreamContainerManager {
   public readonly remoteStreamContainers: Record<RoomMemberId, MediaStream> =
     {};
 
+  private static get streamContainersContainer() {
+    return getElById<HTMLDivElement>(STREAM_CONTAINERS_CONTAINER_ID);
+  }
+
   private static createContainer() {
-    const streamContainersContainer = getElById(STREAM_CONTAINERS_CONTAINER_ID);
-    const el = document.createElement("video");
-    el.classList.add("w-24", "h-24", "bg-black");
-    el.autoplay = true;
-    streamContainersContainer.appendChild(el);
-    return el;
+    const vidElContainer = document.createElement("div");
+    vidElContainer.classList.add("w-full", "h-full", "relative");
+
+    const vidEl = document.createElement("video");
+    vidElContainer.appendChild(vidEl);
+    vidEl.classList.add("absolute", "w-full", "h-full", "object-cover");
+    vidEl.autoplay = true;
+
+    this.streamContainersContainer.appendChild(vidElContainer);
+    this.styleAllContainers();
+    return vidEl;
+  }
+
+  private static styleAllContainers() {
+    const { rows, columns } = this.rowsAndColumns;
+    this.streamContainersContainer.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+    this.streamContainersContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+  }
+
+  private static get rowsAndColumns() {
+    const totalCount = this.streamContainersContainer.children.length;
+    const countRoot = Math.sqrt(totalCount);
+    const columns = Math.round(countRoot) + (isRoundedBelow(countRoot) ? 1 : 0);
+    const rows = Math.round(countRoot);
+    return { rows, columns };
+
+    function isRoundedBelow(num: number) {
+      return Math.round(num) < num;
+    }
   }
 
   set localStream(stream: MediaStream | undefined) {

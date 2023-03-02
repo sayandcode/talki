@@ -1,26 +1,21 @@
 ---
-import PushToTalkBtn from "components/room/PushToTalkBtn.astro";
 import BasicHTMLLayout from "layouts/BasicHTMLLayout.astro";
 import EntryPermissionDialog from "components/room/EntryPermissionDialog.astro";
-import { ROOM_ID_CONTAINER_ID } from "scripts/pages/room/pageManip/roomId";
-import {
-  STREAM_CONTAINERS_CONTAINER_ID,
-  LOCAL_STREAM_CONTAINER_ID,
-} from "scripts/pages/room/pageManip/streamContainer";
+import SelfVideo from "components/room/SelfVideo.astro";
+import RemoteVideosGrid from "components/room/RemoteVideosGrid.astro";
+import RoomIdDisplay from "components/room/RoomIdDisplay.astro";
 ---
 
-<BasicHTMLLayout title="My private room">
-  <div class="h-screen flex flex-col justify-center items-center">
-    <h1 class="text-4xl font-bold mb-4">My chat room</h1>
-    <div class="text-xl font-mono mb-2">
-      Room ID: <span id={ROOM_ID_CONTAINER_ID} class="font-bold"></span>
+<BasicHTMLLayout title="My chat room">
+  <div class="h-screen text-center flex flex-col">
+    <div class="pt-4">
+      <div class="relative text-center w-fit mx-auto">
+        <h1 class="text-4xl font-bold mb-4 px-2">My chat room</h1>
+      </div>
+      <RoomIdDisplay />
     </div>
-    <div id={STREAM_CONTAINERS_CONTAINER_ID}></div>
-    <PushToTalkBtn id="push-to-talk-btn" />
-    <video
-      id={LOCAL_STREAM_CONTAINER_ID}
-      autoplay="true"
-      class="w-24 h-24 bg-black"></video>
+    <RemoteVideosGrid />
+    <SelfVideo />
   </div>
   <EntryPermissionDialog />
 </BasicHTMLLayout>
