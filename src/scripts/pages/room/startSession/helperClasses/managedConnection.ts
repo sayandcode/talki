@@ -1,6 +1,5 @@
-/* eslint-disable no-underscore-dangle */
 import type { RoomMemberId } from "utils/types/Room";
-import streamContainerManager from "../../pageManip/streamContainer";
+import RemoteStreamsManager from "../../pageManip/RemoteStreamsManager";
 import RoomPeerConnection from "./connection";
 
 class ManagedConnection extends RoomPeerConnection {
@@ -40,7 +39,7 @@ class ManagedConnection extends RoomPeerConnection {
     return (e: RTCTrackEvent) => {
       const [remoteStream] = e.streams;
       if (!remoteStream) throw new Error("No stream available in track event");
-      streamContainerManager.addRemoteStream(remoteStream, this.memberId);
+      RemoteStreamsManager.addRemoteStream(remoteStream, this.memberId);
     };
   }
 }

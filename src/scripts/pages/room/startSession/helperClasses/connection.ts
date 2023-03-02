@@ -1,4 +1,4 @@
-import streamContainerManager from "../../pageManip/streamContainer";
+import LocalStreamManager from "../../pageManip/LocalStreamManager";
 
 type StringifiedIceCandidate = string;
 
@@ -28,7 +28,7 @@ class RoomPeerConnection {
   }
 
   private setupConnectionTracks() {
-    const { localStream } = streamContainerManager;
+    const localStream = LocalStreamManager.stream;
     if (!localStream)
       throw new Error(
         "Need a local stream to be created before creating offers"

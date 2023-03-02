@@ -1,5 +1,5 @@
 ---
-import { LOCAL_STREAM_CONTAINER_ID } from "scripts/pages/room/pageManip/streamContainer";
+import LocalStreamManager from "scripts/pages/room/pageManip/LocalStreamManager";
 ---
 
 <div
@@ -7,6 +7,6 @@ import { LOCAL_STREAM_CONTAINER_ID } from "scripts/pages/room/pageManip/streamCo
 >
   <video
     autoplay="true"
-    id={LOCAL_STREAM_CONTAINER_ID}
+    id={LocalStreamManager.VID_EL_ID}
     class="w-full h-full object-cover"></video>
 </div>
