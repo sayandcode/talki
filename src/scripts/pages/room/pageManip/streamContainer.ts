@@ -31,8 +31,11 @@ class StreamContainerManager {
 
   private static styleAllContainers() {
     const { rows, columns } = this.rowsAndColumns;
-    this.streamContainersContainer.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
-    this.streamContainersContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+    this.streamContainersContainer.style.setProperty("--grid-rows", `${rows}`);
+    this.streamContainersContainer.style.setProperty(
+      "--grid-cols",
+      `${columns}`
+    );
   }
 
   private static get rowsAndColumns() {
