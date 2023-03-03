@@ -1,7 +1,11 @@
 import { redirectToInternalUrl } from "utils/functions/redirects";
 import type { RoomId } from "utils/types/Room";
 import LocalStreamManager from "../pageManip/LocalStreamManager";
-import { setRoomIdOnPage, setRoomExpiryOnPage } from "../pageManip/roomId";
+import {
+  setRoomIdOnPage,
+  setRoomExpiryOnPage,
+  switchSpinnerWithRoomIdData,
+} from "../pageManip/roomId";
 import { getRoomIdFromUrl, setRoomIdInUrl } from "../url";
 import RoomWs from "./helperClasses/RoomWs";
 import { createRoom, tryJoinRoom } from "./room-http";
@@ -27,6 +31,7 @@ async function startNewCall() {
   setRoomIdInUrl(roomId);
   setRoomIdOnPage(roomId);
   setRoomExpiryOnPage(expireAt);
+  switchSpinnerWithRoomIdData();
   // eslint-disable-next-line no-new
   new RoomWs(roomData);
 }
@@ -39,6 +44,7 @@ async function joinExistingCall(roomId: RoomId) {
   }
   setRoomIdOnPage(roomId);
   setRoomExpiryOnPage(joinAttempt.data.expireAt);
+  switchSpinnerWithRoomIdData();
   // eslint-disable-next-line no-new
   new RoomWs(joinAttempt.data);
 }

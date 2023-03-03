@@ -1,8 +1,13 @@
 ---
-import { ROOM_EXPIRY_CONTAINER_ID } from "scripts/pages/room/pageManip/roomId";
+import {
+  ROOM_EXPIRY_CONTAINER_ID,
+  ROOM_INVITE_FRIENDS_BTN_ID,
+} from "scripts/pages/room/pageManip/roomId";
 ---
 
 <button
+  id={ROOM_INVITE_FRIENDS_BTN_ID}
+  hidden="true"
   class="ml-2 text-sm font-semibold bg-white focus-visible:bg-gray-200 hover:bg-gray-200 px-2 py-1"
   >Invite friends<br />
   <span class="font-thin text-xs"
