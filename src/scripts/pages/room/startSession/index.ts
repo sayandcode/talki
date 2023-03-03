@@ -5,6 +5,7 @@ import {
   setRoomIdOnPage,
   setRoomExpiryOnPage,
   switchSpinnerWithRoomIdData,
+  setupAutoHideRoomDataOnExpire,
 } from "../pageManip/roomId";
 import { getRoomIdFromUrl, setRoomIdInUrl } from "../url";
 import RoomWs from "./helperClasses/RoomWs";
@@ -31,6 +32,7 @@ async function startNewCall() {
   setRoomIdInUrl(roomId);
   setRoomIdOnPage(roomId);
   setRoomExpiryOnPage(expireAt);
+  setupAutoHideRoomDataOnExpire(expireAt);
   switchSpinnerWithRoomIdData();
   // eslint-disable-next-line no-new
   new RoomWs(roomData);
@@ -44,6 +46,7 @@ async function joinExistingCall(roomId: RoomId) {
   }
   setRoomIdOnPage(roomId);
   setRoomExpiryOnPage(joinAttempt.data.expireAt);
+  setupAutoHideRoomDataOnExpire(joinAttempt.data.expireAt);
   switchSpinnerWithRoomIdData();
   // eslint-disable-next-line no-new
   new RoomWs(joinAttempt.data);
