@@ -1,8 +1,12 @@
+---
+import { ROOM_EXPIRY_CONTAINER_ID } from "scripts/pages/room/pageManip/roomId";
+---
+
 <button
   class="ml-2 text-sm font-semibold bg-white focus-visible:bg-gray-200 hover:bg-gray-200 px-2 py-1"
   >Invite friends<br />
   <span class="font-thin text-xs"
     >Expires in
-    <span class="font-extrabold text-sm"> 0:34</span>s</span
-  >
+    <span id={ROOM_EXPIRY_CONTAINER_ID} class="font-extrabold text-sm"></span>
+  </span>
 </button>

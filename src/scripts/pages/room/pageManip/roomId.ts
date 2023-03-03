@@ -1,12 +1,44 @@
-import type { RoomId } from "utils/types/Room";
+import getElById from "utils/functions/getElById";
+import type { RoomExpireAt, RoomId } from "utils/types/Room";
 
 const ROOM_ID_CONTAINER_ID = "room-id-container";
+const ROOM_EXPIRY_CONTAINER_ID = "room-expiry-time";
 
 function setRoomIdOnPage(roomId: RoomId) {
-  const roomIdSpan = document.getElementById(ROOM_ID_CONTAINER_ID);
-  if (!roomIdSpan) throw new Error("Room id span not found");
+  const roomIdSpan = getElById(ROOM_ID_CONTAINER_ID);
   roomIdSpan.textContent = roomId;
 }
 
-export default setRoomIdOnPage;
-export { ROOM_ID_CONTAINER_ID };
+function setRoomExpiryOnPage(expireAt: RoomExpireAt) {
+  const expiryTime = new Date(expireAt);
+  const intervalRef = setInterval(() => {
+    updateExpiryTime(expiryTime);
+    if (Date.now() > expiryTime.getTime()) clearInterval(intervalRef);
+  }, 1000);
+}
+
+function updateExpiryTime(expiryTime: Date) {
+  const roomExpirySpan = getElById(ROOM_EXPIRY_CONTAINER_ID);
+  const secondsToExpiry = getSecondsToExpiry(expiryTime);
+  const remainingTime = getRemainingTimeStr(secondsToExpiry);
+  roomExpirySpan.textContent = remainingTime;
+}
+
+function getSecondsToExpiry(expiryTime: Date) {
+  return Math.floor((expiryTime.getTime() - Date.now()) / 1000);
+}
+
+function getRemainingTimeStr(secondsToExpiry: number) {
+  const remainingMin = Math.floor(secondsToExpiry / 60);
+  const remainingSec = secondsToExpiry % 60;
+  const formattedRemainingSec =
+    remainingSec < 10 ? `0${remainingSec}` : remainingSec;
+  return `${remainingMin}:${formattedRemainingSec}`;
+}
+
+export {
+  setRoomIdOnPage,
+  setRoomExpiryOnPage,
+  ROOM_ID_CONTAINER_ID,
+  ROOM_EXPIRY_CONTAINER_ID,
+};
