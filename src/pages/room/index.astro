@@ -1,39 +1,22 @@
 ---
 import BasicHTMLLayout from "layouts/BasicHTMLLayout.astro";
-import EntryPermissionDialog from "components/room/EntryPermissionDialog.astro";
-import LeaveRoomBtn from "components/room/LeaveRoomBtn.astro";
-import SelfVideo from "components/room/SelfVideo.astro";
-import RemoteVideosGrid from "components/room/RemoteVideosGrid.astro";
-import RoomIdDisplay from "components/room/RoomIdDisplay/index.astro";
+import RoomPage from "components/room/index.page";
 ---
 
 <BasicHTMLLayout title="My chat room">
-  <div class="h-screen text-center flex flex-col">
-    <div
-      class="flex flex-row items-center justify-center sm:justify-between px-2 gap-x-4 z-[1]"
-    >
-      <SelfVideo />
-      <div class="pt-4">
-        <h1 class="text-4xl text-center font-bold mb-4 px-2">My chat room</h1>
-        <RoomIdDisplay />
-      </div>
-      <LeaveRoomBtn />
-    </div>
-    <RemoteVideosGrid />
-  </div>
-  <EntryPermissionDialog />
+  <RoomPage />
 </BasicHTMLLayout>
 <script>
-  import { redirectIfNotLoggedIn } from "utils/functions/redirects";
-  import startSession from "scripts/pages/room/startSession";
+  /*   import { redirectIfNotLoggedIn } from "utils/functions/redirects"; */
+  /*   import startSession from "scripts/pages/room/startSession"; */
 
-  const isRedirected = await redirectIfNotLoggedIn(getRedirectPath());
-  if (!isRedirected) startSession();
+  /*   const isRedirected = await redirectIfNotLoggedIn(getRedirectPath()); */
+  /*   if (!isRedirected) startSession(); */
 
-  function getRedirectPath() {
-    const currUrl = new URL(document.location.href);
-    const currPath = `/room${currUrl.search}`;
-    const redirectPath = `/login?redirectTo=${currPath}`;
-    return redirectPath;
-  }
+  /*   function getRedirectPath() { */
+  /*     const currUrl = new URL(document.location.href); */
+  /*     const currPath = `/room${currUrl.search}`; */
+  /*     const redirectPath = `/login?redirectTo=${currPath}`; */
+  /*     return redirectPath; */
+  /*   } */
 </script>

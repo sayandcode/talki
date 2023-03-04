@@ -7,7 +7,7 @@ module.exports = {
     "import/resolver": {
       node: {
         paths: ["src"],
-        extensions: [".ts", ".astro"],
+        extensions: [".ts", ".tsx", ".astro"],
       },
     },
   },

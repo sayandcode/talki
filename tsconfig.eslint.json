@@ -3,6 +3,7 @@
   "include": [
     "src/**/*.astro",
     "src/**/*.ts",
+    "src/**/*.tsx",
     "configHelpers/*.js",
     "astro.config.mjs",
     "./.eslintrc.cjs"
