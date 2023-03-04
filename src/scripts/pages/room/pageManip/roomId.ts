@@ -1,5 +1,6 @@
 import getElById from "utils/functions/getElById";
 import type { RoomExpireAt, RoomId } from "utils/types/Room";
+import { setRoomIdInCopyUrlComponent } from "./InviteFriendsModal";
 
 const ROOM_ID_CONTAINER_ID = "room-id-container";
 const ROOM_EXPIRY_CONTAINER_ID = "room-expiry-time";
@@ -10,6 +11,7 @@ const ROOM_DATA_BAR_ID = "room-data-bar";
 function setRoomIdOnPage(roomId: RoomId) {
   const roomIdSpan = getElById(ROOM_ID_CONTAINER_ID);
   roomIdSpan.textContent = roomId;
+  setRoomIdInCopyUrlComponent(roomId);
 }
 
 function setRoomExpiryOnPage(expireAt: RoomExpireAt) {

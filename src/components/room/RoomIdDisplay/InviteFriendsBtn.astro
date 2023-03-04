@@ -3,6 +3,7 @@ import {
   ROOM_EXPIRY_CONTAINER_ID,
   ROOM_INVITE_FRIENDS_BTN_ID,
 } from "scripts/pages/room/pageManip/roomId";
+import InviteFriendsModal from "./InviteFriendsModal/index.astro";
 ---
 
 <button
@@ -15,3 +16,16 @@ import {
     <span id={ROOM_EXPIRY_CONTAINER_ID} class="font-extrabold text-sm"></span>
   </span>
 </button>
+<InviteFriendsModal />
+<script>
+  import { INVITE_FRIENDS_MODAL_ID } from "scripts/pages/room/pageManip/InviteFriendsModal";
+  import { ROOM_INVITE_FRIENDS_BTN_ID } from "scripts/pages/room/pageManip/roomId";
+  import getElById from "utils/functions/getElById";
+
+  const btn = getElById(ROOM_INVITE_FRIENDS_BTN_ID);
+  const dialogEl = getElById<HTMLDialogElement>(INVITE_FRIENDS_MODAL_ID);
+
+  btn.addEventListener("click", () => {
+    dialogEl.showModal();
+  });
+</script>
