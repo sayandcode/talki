@@ -1,9 +1,13 @@
 import { useMemo, useState } from "preact/hooks";
-import type { RoomMemberId } from "utils/types/Room";
+import type { RoomMemberId, RoomUserData } from "utils/types/Room";
 
 type StreamsList = Record<
   RoomMemberId,
-  { memberId: RoomMemberId; mediaStream: MediaStream }
+  {
+    memberId: RoomMemberId;
+    mediaStream: MediaStream;
+    memberData?: RoomUserData;
+  }
 >;
 
 function useRemoteStreamsManager() {
@@ -18,6 +22,15 @@ function useRemoteStreamsManager() {
     }));
   }
 
+  function addMemberData(memberId: RoomMemberId, memberData: RoomUserData) {
+    setStreamsMap((oldMap) => {
+      const requiredStream = oldMap[memberId];
+      if (!requiredStream) throw new Error("The given member doesn't exist");
+
+      return { ...oldMap, [memberId]: { ...requiredStream, memberData } };
+    });
+  }
+
   function removeStream(memberId: RoomMemberId) {
     setStreamsMap((oldMap) => {
       if (!(memberId in oldMap))
@@ -29,7 +42,7 @@ function useRemoteStreamsManager() {
   }
 
   const streamsArr = useMemo(() => Object.values(streamsMap), [streamsMap]);
-  return { streamsArr, addStream, removeStream };
+  return { streamsArr, addStream, addMemberData, removeStream };
 }
 
 export default useRemoteStreamsManager;

@@ -30,10 +30,7 @@ function makeSendSdpActionHandler({
     PayloadValidator,
     async (payload, roomData, roomWs) => {
       const { roomId } = roomData;
-      const { senderMemberId, sdp } = payload;
-      console.log(
-        "TODO: Destructure the senderData and add it to the list of members on the page"
-      );
+      const { senderMemberId, sdp, senderData } = payload;
 
       const conn = ManagedConnection.getFromMemberId(senderMemberId);
       if (conn) await conn.setRemoteDescription(sdp);
@@ -46,6 +43,7 @@ function makeSendSdpActionHandler({
           remoteStreamsManager,
           localStream,
         });
+      remoteStreamsManager.addMemberData(senderMemberId, senderData);
       promptPeerToSendIceCandidates({
         receiverMemberId: senderMemberId,
         roomId,
