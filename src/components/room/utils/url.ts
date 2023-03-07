@@ -8,7 +8,7 @@ function getRoomIdFromUrl(): RoomId | null {
 
 function setRoomIdInUrl(roomId: RoomId) {
   const roomIdParam = new URLSearchParams({ roomId });
-  window.history.pushState(null, "", `?${roomIdParam}`);
+  window.history.replaceState(null, "", `?${roomIdParam}`);
 }
 
 function getRoomPageUnauthedRedirectPath() {
