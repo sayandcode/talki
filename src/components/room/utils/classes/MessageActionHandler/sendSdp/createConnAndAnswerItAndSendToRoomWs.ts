@@ -8,13 +8,21 @@ async function createNewPcAndAnswerItAndSendToRoomWs({
   roomWs,
   roomId,
   offerSdp,
+  remoteStreamsManager,
+  localStream,
 }: {
   receiverMemberId: RoomMemberId;
   roomWs: WebSocket;
   roomId: RoomId;
   offerSdp: RTCSessionDescriptionInit;
+  remoteStreamsManager: ConstructorParameters<typeof ManagedConnection>[1];
+  localStream: ConstructorParameters<typeof ManagedConnection>[2];
 }) {
-  const conn = new ManagedConnection(receiverMemberId);
+  const conn = new ManagedConnection(
+    receiverMemberId,
+    remoteStreamsManager,
+    localStream
+  );
   const iceEventHandler = getIceEventHandler({
     roomWs,
     conn,

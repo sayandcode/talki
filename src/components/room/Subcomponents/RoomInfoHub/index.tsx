@@ -1,26 +1,49 @@
-import {
-  ROOM_ID_CONTAINER_ID,
-  ROOM_DATA_BAR_ID,
-  ROOM_ID_SPINNER_ID,
-} from "scripts/pages/room/pageManip/roomId";
+import { useEffect, useState } from "preact/hooks";
+import type { RoomExpireAt, RoomId } from "utils/types/Room";
 import InviteFriendsBtn from "./InviteFriendsBtn";
 
-function RoomPageRoomInfoHub() {
+type Props = {
+  roomId: RoomId | undefined;
+  expireAt: RoomExpireAt | undefined;
+};
+function RoomPageRoomInfoHub({ roomId, expireAt }: Props) {
+  const [isComponentShown, setIsComponentShown] = useState(true);
+
+  const autoHideRoomInfoHubOnExpire = {
+    setup: (expiryTimeIsoString: RoomExpireAt) => {
+      const expiryTime = new Date(expiryTimeIsoString);
+      const secondsToExpiry = getSecondsToExpiry(expiryTime);
+      const timeoutRef = setTimeout(() => {
+        setIsComponentShown(false);
+      }, secondsToExpiry * 1000);
+      return timeoutRef;
+    },
+    cleanup: (timeoutRef: number) => clearTimeout(timeoutRef),
+  };
+
+  useEffect(() => {
+    if (!expireAt) return;
+    const timeoutRef = autoHideRoomInfoHubOnExpire.setup(expireAt);
+    // eslint-disable-next-line consistent-return
+    return () => autoHideRoomInfoHubOnExpire.cleanup(timeoutRef);
+  }, [expireAt]);
+
+  function getSecondsToExpiry(expiryTime: Date) {
+    return Math.floor((expiryTime.getTime() - Date.now()) / 1000);
+  }
+
+  if (!isComponentShown) return null;
   return (
-    <div
-      id={ROOM_DATA_BAR_ID}
-      class="text-lg font-mono pb-2 text-center align-top flex flex-wrap sm:flex-row justify-center items-center gap-x-1"
-    >
+    <div class="text-lg font-mono pb-2 text-center align-top flex flex-wrap sm:flex-row justify-center items-center gap-1">
       <div class="whitespace-nowrap">Room ID:</div>
-      <img
-        id={ROOM_ID_SPINNER_ID}
-        src="/talki/loadingSpinner.gif"
-        class="h-6 pb-1 pl-1"
-      />
-      <div id={ROOM_ID_CONTAINER_ID} class="font-bold" hidden>
-        sjflksjlkjldjoi3j3knlk93fs
-      </div>
-      <InviteFriendsBtn />
+      {roomId && expireAt ? (
+        <>
+          <div class="font-bold">{roomId}</div>
+          <InviteFriendsBtn roomId={roomId} expireAt={expireAt} />
+        </>
+      ) : (
+        <img src="/talki/loadingSpinner.gif" class="h-6 pb-1 pl-1" />
+      )}
     </div>
   );
 }

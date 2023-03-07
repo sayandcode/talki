@@ -5,7 +5,11 @@ const { ENV, BACKEND_URL, ROOM_WS_URL } = loadEnv();
 const devCSPObj = {
   "default-src": "'none'",
   "img-src": "'self'",
-  "script-src": ["'self'", "https://accounts.google.com/gsi/client"],
+  "script-src": [
+    "'self'",
+    "https://accounts.google.com/gsi/client",
+    "'unsafe-inline'",
+  ],
   "style-src": ["'unsafe-inline'", "https://accounts.google.com/gsi/style"],
   "frame-src": "https://accounts.google.com/",
   "connect-src": ["'self'", BACKEND_URL, ROOM_WS_URL],

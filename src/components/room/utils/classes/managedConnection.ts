@@ -1,5 +1,5 @@
+import type useRemoteStreamsManager from "components/room/Subcomponents/RemoteVideosGrid/hooks/useRemoteStreamsManager";
 import type { RoomMemberId } from "utils/types/Room";
-import RemoteStreamsManager from "../../pageManip/RemoteStreamsManager";
 import RoomPeerConnection from "./connection";
 
 class ManagedConnection extends RoomPeerConnection {
@@ -31,8 +31,12 @@ class ManagedConnection extends RoomPeerConnection {
     }
   );
 
-  constructor(private memberId: RoomMemberId) {
-    super();
+  constructor(
+    private memberId: RoomMemberId,
+    private remoteStreamsManager: ReturnType<typeof useRemoteStreamsManager>,
+    localStream: MediaStream
+  ) {
+    super(localStream);
     this.pc.addEventListener("track", this.getRemoteTrackEventHandler());
     this.pc.addEventListener(
       "connectionstatechange",
@@ -49,7 +53,7 @@ class ManagedConnection extends RoomPeerConnection {
     return (e: RTCTrackEvent) => {
       const [remoteStream] = e.streams;
       if (!remoteStream) throw new Error("No stream available in track event");
-      RemoteStreamsManager.addRemoteStream(remoteStream, this.memberId);
+      this.remoteStreamsManager.addStream(remoteStream, this.memberId);
     };
   }
 
@@ -57,7 +61,7 @@ class ManagedConnection extends RoomPeerConnection {
     return () => {
       const isConnectionClosed = this.pc.connectionState === "failed";
       if (!isConnectionClosed) return;
-      RemoteStreamsManager.removeRemoteStream(this.memberId);
+      this.remoteStreamsManager.removeStream(this.memberId);
       ManagedConnection.removeFromList(this);
     };
   }

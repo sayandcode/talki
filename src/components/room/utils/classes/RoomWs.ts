@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { redirectToInternalUrl } from "utils/functions/redirects";
 import type {
   RoomExpireAt,
@@ -8,11 +9,6 @@ import type {
 } from "utils/types/Room";
 import { z } from "zod";
 import type MessageActionHandler from "./MessageActionHandler";
-import askEntryPermissionActionHandler from "./MessageActionHandler/askEntryPermission";
-import promptIceCandidateActionHandler from "./MessageActionHandler/promptIceCandidate";
-import promptSdpActionHandler from "./MessageActionHandler/promptSdp";
-import sendIceCandidateActionHandler from "./MessageActionHandler/sendIceCandidate";
-import sendSdpActionHandler from "./MessageActionHandler/sendSdp";
 
 type RoomData = {
   wsUrl: RoomWsUrl;
@@ -23,20 +19,37 @@ type RoomData = {
 };
 
 class RoomWs {
-  public readonly ws: WebSocket;
+  private _ws?: WebSocket;
 
-  constructor(public readonly roomData: RoomData) {
+  private get ws() {
+    const ws = this._ws;
+    if (!ws) throw new Error("Websocket has not been connected yet");
+    return ws;
+  }
+
+  private set ws(newWs: WebSocket) {
+    const isAlreadySet = this._ws;
+    if (isAlreadySet) throw new Error("Websocket has already been connected");
+    this._ws = newWs;
+  }
+
+  constructor(public readonly roomData: RoomData) {}
+
+  connect() {
     const fullRoomWsUrl = this.getFullUrl();
     this.ws = new WebSocket(fullRoomWsUrl);
-    this.setupAutoClose();
-    this.setupRoomWsEventListeners();
-    this.setupAllMessageActionHandlers();
+    this.setupWs();
   }
 
   private getFullUrl() {
     const { wsUrl, roomId, memberId, nonce } = this.roomData;
     const authParams = new URLSearchParams({ roomId, memberId, nonce });
     return `${wsUrl}?${authParams.toString()}`;
+  }
+
+  private setupWs() {
+    this.setupAutoClose();
+    this.setupRoomWsEventListeners();
   }
 
   private setupAutoClose() {
@@ -81,17 +94,9 @@ class RoomWs {
   > = {};
 
   // builder pattern
-  private addMessageActionHandler(handler: MessageActionHandler) {
+  public addMessageActionHandler(handler: MessageActionHandler) {
     this.messageActionHandlers[handler.action] = handler;
     return this;
-  }
-
-  private setupAllMessageActionHandlers() {
-    this.addMessageActionHandler(askEntryPermissionActionHandler)
-      .addMessageActionHandler(promptSdpActionHandler)
-      .addMessageActionHandler(sendSdpActionHandler)
-      .addMessageActionHandler(sendIceCandidateActionHandler)
-      .addMessageActionHandler(promptIceCandidateActionHandler);
   }
 }
 

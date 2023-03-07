@@ -1,5 +1,3 @@
-import LocalStreamManager from "../../pageManip/LocalStreamManager";
-
 type StringifiedIceCandidate = string;
 
 class RoomPeerConnection {
@@ -22,17 +20,12 @@ class RoomPeerConnection {
     iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
   };
 
-  constructor() {
+  constructor(localStream: MediaStream) {
     this.pc = new RTCPeerConnection(RoomPeerConnection.rtcConfig);
-    this.setupConnectionTracks();
+    this.setupConnectionTracks(localStream);
   }
 
-  private setupConnectionTracks() {
-    const localStream = LocalStreamManager.stream;
-    if (!localStream)
-      throw new Error(
-        "Need a local stream to be created before creating offers"
-      );
+  private setupConnectionTracks(localStream: MediaStream) {
     localStream
       .getTracks()
       .forEach((track) => this.pc.addTrack(track, localStream));

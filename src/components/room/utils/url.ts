@@ -11,4 +11,11 @@ function setRoomIdInUrl(roomId: RoomId) {
   window.history.pushState(null, "", `?${roomIdParam}`);
 }
 
-export { getRoomIdFromUrl, setRoomIdInUrl };
+function getRoomPageUnauthedRedirectPath() {
+  const currUrl = new URL(document.location.href);
+  const currPath = `/room${currUrl.search}`;
+  const redirectPath = `/login?redirectTo=${currPath}`;
+  return redirectPath;
+}
+
+export { getRoomIdFromUrl, getRoomPageUnauthedRedirectPath, setRoomIdInUrl };
