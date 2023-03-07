@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "preact/hooks";
 import type { RoomId } from "utils/types/Room";
 import LinkAttribution from "./Subcomponents/LinkAttribution";
+import SendViaWhatsappBtn from "./Subcomponents/SendViaWhatsappBtn";
 import UrlCopy from "./Subcomponents/UrlCopy";
 
 type Props = {
@@ -21,6 +22,8 @@ function RoomPageInviteFriendsModal({
     dialogRef.current?.[fnToCall]();
   }, [isOpen]);
 
+  const roomUrl = getRoomUrl(roomId);
+
   return (
     <dialog ref={dialogRef} class="bg-transparent" onClick={closeModal}>
       <div class="bg-white p-4" onClick={(e) => e.stopPropagation()}>
@@ -34,11 +37,18 @@ function RoomPageInviteFriendsModal({
           </button>
           <h1 class="font-bold">Invite friends to this room</h1>
         </div>
-        <UrlCopy roomId={roomId} />
+        <UrlCopy roomUrl={roomUrl} />
+        <SendViaWhatsappBtn roomUrl={roomUrl} />
         <LinkAttribution />
       </div>
     </dialog>
   );
+}
+
+function getRoomUrl(roomId: RoomId) {
+  const url = new URL(window.location.href);
+  url.searchParams.set("roomId", roomId);
+  return url.toString();
 }
 
 export default RoomPageInviteFriendsModal;

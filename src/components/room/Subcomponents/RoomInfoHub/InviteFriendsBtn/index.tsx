@@ -14,7 +14,7 @@ type Props = {
 
 function RoomPageInviteFriendsBtn({ roomId, expireAt }: Props) {
   // time left
-  const [timeLeftStr, setTimeLeftStr] = useState("5:00");
+  const [timeLeftStr, setTimeLeftStr] = useState("-:--");
 
   useEffect(() => {
     const cleanupRefs = runEverySecondTillExpiry.setup(
