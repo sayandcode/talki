@@ -1,0 +1,39 @@
+name: Deploy on AWS
+on:
+  push:
+    branches: [ backend ]
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Get code onto system
+        uses: actions/checkout@v3
+
+      - name: Setup AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: ap-south-1
+          role-to-assume: arn:aws:iam::410062564309:role/gh-actions-talki
+          role-session-name: TalkiBackendSession
+
+      - name: Setup node v16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: yarn
+
+      - name: Setup AWS CDK
+        run: npm install -g aws-cdk
+
+      - name: Setup env file
+        env:
+          ENV_FILE: ${{ secrets.ENV_BACKEND }}
+        run: echo "$ENV_FILE" > .env
+
+      - run: yarn ci
+      - run: yarn deploy
+      - run: yarn lint
+

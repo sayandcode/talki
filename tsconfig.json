@@ -6,14 +6,21 @@
   },
   "compilerOptions": {
     /* Language and Environment */
-    "target": "es2016", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "target": "ES2022", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
     /* Modules */
     "module": "commonjs", /* Specify what module code is generated. */
     "rootDir": "./src", /* Specify the root folder within your source files. */
     "baseUrl": "./src", /* Specify the base directory to resolve non-relative module names. */
-    "paths": {}, /* Specify a set of entries that re-map imports to additional lookup locations. */
+    "paths": {
+      "@appLambda/*": [
+        "lambdas/app/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ]
+    }, /* Specify a set of entries that re-map imports to additional lookup locations. */
     /* Emit */
-    "outDir": "./dist", /* Specify an output folder for all emitted files. */
+    // "outDir": "./dist", /* Specify an output folder for all emitted files. */
     /* Interop Constraints */
     "esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
     "forceConsistentCasingInFileNames": true, /* Ensure that casing is correct in imports. */
@@ -29,7 +36,7 @@
     "alwaysStrict": true, /* Ensure 'use strict' is always emitted. */
     "noUnusedLocals": true, /* Enable error reporting when local variables aren't read. */
     "noUnusedParameters": true, /* Raise an error when a function parameter isn't read. */
-    "exactOptionalPropertyTypes": true, /* Interpret optional property types as written, rather than adding 'undefined'. */
+    "exactOptionalPropertyTypes": false, /* Interpret optional property types as written, rather than adding 'undefined'. */
     "noImplicitReturns": true, /* Enable error reporting for codepaths that do not explicitly return in a function. */
     "noFallthroughCasesInSwitch": true, /* Enable error reporting for fallthrough cases in switch statements. */
     "noUncheckedIndexedAccess": true, /* Add 'undefined' to a type when accessed using an index. */
@@ -39,5 +46,8 @@
     "allowUnreachableCode": true, /* Disable error reporting for unreachable code. */
     /* Completeness */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
-  }
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
 }
