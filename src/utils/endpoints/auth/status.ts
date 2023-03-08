@@ -1,8 +1,11 @@
+import type { RoomUserData } from "utils/types/Room";
 import backendBaseUrl from "..";
 
 type AuthStatusEndpoint = {
   body: void;
-  response: { isLoggedIn: boolean };
+  response:
+    | { isLoggedIn: false }
+    | { isLoggedIn: true; userData: RoomUserData };
 };
 
 const authStatusEndpoint = {

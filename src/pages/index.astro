@@ -1,10 +1,12 @@
 ---
 import Layout from "layouts/BasicHTMLLayout.astro";
+import LoggedInStatus from "components/index/LoggedInStatus";
 ---
 
 <Layout title="Talki: Free walkie talkie chat">
   <main class="h-screen flex flex-col justify-center items-center gap-y-4">
     <h1 class="font-sans text-6xl font-bold">Talki</h1>
+    <LoggedInStatus client:load />
     <form id="join-room-form" class="flex flex-col gap-y-4 items-center">
       <label for="roomId-input" class="sr-only">Enter room I.D.</label>
       <input

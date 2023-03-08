@@ -6,7 +6,7 @@ import backendFetch from "./backendFetch";
  * @returns boolean whether or not redirection took place
  */
 async function redirectIfLoggedIn(newUrl: string) {
-  const isLoggedIn = await fetchIsLoggedIn();
+  const { isLoggedIn } = await fetchIsLoggedIn();
   if (isLoggedIn) {
     redirectToInternalUrl(newUrl);
     return true;
@@ -18,7 +18,7 @@ async function redirectIfLoggedIn(newUrl: string) {
  * @returns boolean whether or not redirection took place
  */
 async function redirectIfNotLoggedIn(newUrl: string) {
-  const isLoggedIn = await fetchIsLoggedIn();
+  const { isLoggedIn } = await fetchIsLoggedIn();
   if (!isLoggedIn) {
     redirectToInternalUrl(newUrl);
     return true;
@@ -30,11 +30,15 @@ function redirectToInternalUrl(newUrl: string) {
   window.location.href = `/talki${newUrl}`;
 }
 
-async function fetchIsLoggedIn() {
+async function fetchIsLoggedIn(): Promise<AuthStatusEndpoint["response"]> {
   const { url, method } = authStatusEndpoint;
   const res = await backendFetch(url, { method });
-  const { isLoggedIn } = (await res.json()) as AuthStatusEndpoint["response"];
-  return isLoggedIn;
+  return res.json();
 }
 
-export { redirectIfNotLoggedIn, redirectIfLoggedIn, redirectToInternalUrl };
+export {
+  redirectIfNotLoggedIn,
+  redirectIfLoggedIn,
+  redirectToInternalUrl,
+  fetchIsLoggedIn,
+};
