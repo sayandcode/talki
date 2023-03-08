@@ -1,10 +1,12 @@
 ---
 import Layout from "layouts/BasicHTMLLayout.astro";
+import LoggedInStatus from "components/index/LoggedInStatus";
 ---
 
-<Layout title="Talki: Free walkie talkie chat">
+<Layout title="Talki: Free unlimited video calling">
   <main class="h-screen flex flex-col justify-center items-center gap-y-4">
     <h1 class="font-sans text-6xl font-bold">Talki</h1>
+    <LoggedInStatus client:load />
     <form id="join-room-form" class="flex flex-col gap-y-4 items-center">
       <label for="roomId-input" class="sr-only">Enter room I.D.</label>
       <input
@@ -15,14 +17,14 @@ import Layout from "layouts/BasicHTMLLayout.astro";
       />
       <button
         type="submit"
-        class="bg-gray-50 active:bg-gray-400 hover:bg-gray-200 px-2 py-1 rounded font-mono"
+        class="bg-gray-50 active:bg-gray-400 hover:bg-gray-200 px-2 py-1 font-mono font-bold"
         >Join existing room</button
       >
     </form>
     <div class="font-sans">or</div>
     <a
       href="/talki/room"
-      class="bg-gray-50 active:bg-gray-400 hover:bg-gray-200 px-2 py-1 rounded font-mono"
+      class="bg-talki-black hover:bg-gray-300 focus-visible:bg-gray-300 hover:outline hover:outline-2 hover:outline-gray-500 text-white hover:text-black focus-visible:text-black px-4 py-2 font-mono font-bold"
       >Create new Chat Room</a
     >
   </main>
