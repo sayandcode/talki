@@ -1,0 +1,8 @@
+dist.*/
+infra/
+node_modules
+.env
+
+# development
+*.dev/
+*.dev.*

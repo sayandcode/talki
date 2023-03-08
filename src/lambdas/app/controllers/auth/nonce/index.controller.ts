@@ -20,7 +20,7 @@ function makeAuthNonceController(databaseClients: DatabaseClients) {
       httpOnly: true,
       maxAge: NONCE_TIMEOUT,
       secure: true, // set to true when hosted on https
-      sameSite: 'none'
+      sameSite: "none",
     });
 
     res.status(200).json({ nonce });

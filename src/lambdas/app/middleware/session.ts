@@ -14,7 +14,7 @@ function makeSessionMiddlewareArr(databaseClients: DatabaseClients) {
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // 1 day
       secure: true, // set to true when hosted on https
-      sameSite: 'none'
+      sameSite: "none",
     },
     saveUninitialized: false,
     resave: false,
