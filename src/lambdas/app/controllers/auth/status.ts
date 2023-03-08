@@ -1,8 +1,9 @@
 import { RequestHandler } from "express";
 
 const authStatusController: RequestHandler = (req, res) => {
-  const isLoggedIn = !!req.session.userData;
-  res.status(200).json({ isLoggedIn });
+  const { userData } = req.session;
+  const isLoggedIn = !!userData;
+  res.status(200).json({ isLoggedIn, userData });
 };
 
 export default authStatusController;
