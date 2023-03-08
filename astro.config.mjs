@@ -14,7 +14,7 @@ export default defineConfig({
       "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
       "Content-Security-Policy": CSPConfigStr,
       "Permissions-Policy":
-        "picture-in-picture=(), geolocation=(), camera=(self), microphone=()",
+        "picture-in-picture=(), geolocation=(), camera=(self), microphone=(self)",
       "X-Frame-Options": "DENY",
     },
   },
