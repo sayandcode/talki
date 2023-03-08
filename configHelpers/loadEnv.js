@@ -1,6 +1,6 @@
 export default function loadEnv() {
-  const { ENV, BACKEND_URL } = process.env;
-  const envVars = { ENV, BACKEND_URL };
+  const { ENV, BACKEND_URL, ROOM_WS_URL } = process.env;
+  const envVars = { ENV, BACKEND_URL, ROOM_WS_URL };
 
   const isEnvVarsValid = Object.values(envVars).every((val) => !!val);
   if (!isEnvVarsValid)
