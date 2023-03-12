@@ -35,7 +35,7 @@ export const handler: Handler = async (
     requestedRoom,
     requestingMemberId
   );
-  if (isRoomReadyToAcceptMembers) return rejectedAuthPolicy;
+  if (!isRoomReadyToAcceptMembers) return rejectedAuthPolicy;
 
   const isProcessingSuccessful = await processRequestSender(
     requestedRoom,
