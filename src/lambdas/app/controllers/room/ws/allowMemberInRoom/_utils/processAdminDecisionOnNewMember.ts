@@ -1,6 +1,7 @@
 import wsBackendForApp from "@appLambda/utils/wsBackend";
 import { RoomDocument } from "models/Room/index.model";
 import { ConnectedRoomMember } from "models/Room/schemas/member/index.schema";
+import askOtherMembersToConnectToNewMember from "@utils/askOtherMembersToConnectToNewMember";
 
 async function processAdminDecisionOnNewMember({
   isNewMemberAllowedInRoomByAdmin,
@@ -17,6 +18,11 @@ async function processAdminDecisionOnNewMember({
   } else {
     // eslint-disable-next-line no-param-reassign
     newMember.isAllowedInRoom = true;
+    await askOtherMembersToConnectToNewMember(
+      requestedRoom,
+      newMember.memberId,
+      wsBackendForApp
+    );
   }
   await requestedRoom.save();
 }
