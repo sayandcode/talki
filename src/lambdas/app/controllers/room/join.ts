@@ -6,6 +6,7 @@ import { z } from "zod";
 import APP_ENV_VARS from "@appLambda/env";
 import RoomModelValidators from "models/Room/index.validator";
 import makeTypedBodyController from "@appLambda/utils/reqRes/typedParsedBody";
+import { RoomMember } from "models/Room/schemas/member/index.schema";
 import { getUserDataFromAuthedReq } from "./_utils/reqManipulators";
 
 const BodyValidator = z.object({
@@ -24,13 +25,18 @@ function makeRoomJoinController(databaseClients: DatabaseClients) {
         next(new ApiError(404, "Couldn't find room"));
         return;
       }
-      const newMember = await requestedRoom.addMember(userData);
+
+      let memberId: RoomMember["memberId"];
+      let nonce: NonNullable<RoomMember["nonce"]>;
+      if (requestedRoom.getIsMemberAdded(userData))
+        ({ memberId, nonce } = await requestedRoom.refreshMember(userData));
+      else ({ memberId, nonce } = await requestedRoom.addMember(userData));
 
       res.status(200).json({
         wsUrl: APP_ENV_VARS.ROOM_WS_URL,
         roomId,
-        memberId: newMember.memberId,
-        nonce: newMember.nonce,
+        memberId,
+        nonce,
         expireAt: requestedRoom.expireAt,
       });
     })
