@@ -2,13 +2,18 @@ import type useRemoteStreamsManager from "components/room/Subcomponents/RemoteVi
 import type { RoomMemberId } from "utils/types/Room";
 import RoomPeerConnection from "./connection";
 
+type ListenerEvents = keyof RTCPeerConnectionEventMap;
+type ListenerFn<E extends ListenerEvents> = (
+  this: RTCPeerConnection,
+  ev: RTCPeerConnectionEventMap[E]
+) => any;
+
 class ManagedConnection extends RoomPeerConnection {
   private static list: Map<RoomMemberId, ManagedConnection> = new Map();
 
   private static addToList(conn: ManagedConnection) {
-    const isAddedAlready = this.list.has(conn.memberId);
-    if (isAddedAlready)
-      throw new Error("The connection for this member already exists");
+    const alreadyAddedConn = this.list.get(conn.memberId);
+    if (alreadyAddedConn) alreadyAddedConn.destroy();
     this.list.set(conn.memberId, conn);
   }
 
@@ -31,17 +36,16 @@ class ManagedConnection extends RoomPeerConnection {
     }
   );
 
+  private listeners: { [k in ListenerEvents]?: ListenerFn<k> } = {};
+
   constructor(
     private memberId: RoomMemberId,
     private remoteStreamsManager: ReturnType<typeof useRemoteStreamsManager>,
     localStream: MediaStream
   ) {
     super(localStream);
-    this.pc.addEventListener("track", this.getRemoteTrackEventHandler());
-    this.pc.addEventListener(
-      "connectionstatechange",
-      this.getConnectionStateChangeHandler()
-    );
+    this.addTrackEventListener();
+    this.addConnectionStateChangeListener();
     ManagedConnection.addToList(this);
   }
 
@@ -49,21 +53,35 @@ class ManagedConnection extends RoomPeerConnection {
     this.pc.addEventListener("icecandidate", iceEventHandler);
   }
 
-  private getRemoteTrackEventHandler() {
-    return (e: RTCTrackEvent) => {
+  private addTrackEventListener() {
+    const listener = (e: RTCTrackEvent) => {
       const [remoteStream] = e.streams;
       if (!remoteStream) throw new Error("No stream available in track event");
       this.remoteStreamsManager.addStream(remoteStream, this.memberId);
     };
+    this.pc.addEventListener("track", listener);
+    this.listeners.track = listener;
   }
 
-  private getConnectionStateChangeHandler() {
-    return () => {
+  private addConnectionStateChangeListener() {
+    const listener = () => {
       const isConnectionClosed = this.pc.connectionState === "failed";
       if (!isConnectionClosed) return;
       this.remoteStreamsManager.removeStream(this.memberId);
       ManagedConnection.removeFromList(this);
     };
+    this.pc.addEventListener("connectionstatechange", listener);
+    this.listeners.connectionstatechange = listener;
+  }
+
+  private destroy() {
+    const { pc } = this;
+    Object.entries(this.listeners).forEach(([eventName, listener]) => {
+      pc.removeEventListener(
+        eventName as ListenerEvents,
+        listener as ListenerFn<ListenerEvents>
+      );
+    });
   }
 }
 
