@@ -7,9 +7,9 @@ function getIsRoomReadyToAcceptMembers(
   requestingMemberId: RoomMember["memberId"]
 ) {
   const adminMember = requestedRoom.getAdminMember();
-  const isThisRequestNotFromAdmin = adminMember.memberId !== requestingMemberId;
-  const isAdminNotConnected = !getIsMemberConnected(adminMember);
-  return isThisRequestNotFromAdmin && isAdminNotConnected;
+  const isThisRequestFromAdmin = adminMember.memberId === requestingMemberId;
+  const isAdminConnected = getIsMemberConnected(adminMember);
+  return isThisRequestFromAdmin || isAdminConnected;
 }
 
 export default getIsRoomReadyToAcceptMembers;

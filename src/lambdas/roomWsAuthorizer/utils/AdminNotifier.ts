@@ -1,14 +1,10 @@
-import WsBackend from "@utils/WsBackend";
 import { RoomDocument } from "models/Room/index.model";
 import { getIsMemberConnected } from "models/Room/schemas/member/helperFns";
 import {
   ConnectedRoomMember,
   RoomMember,
 } from "models/Room/schemas/member/index.schema";
-import ROOM_WS_AUTHORIZER_ENV_VARS from "../env";
-
-const wsUrl = ROOM_WS_AUTHORIZER_ENV_VARS.ROOM_WS_URL;
-const wsBackend = new WsBackend(wsUrl);
+import wsBackendForRoomWsAuthorizer from "./wsBackend";
 
 type Member = RoomMember;
 type MemberId = Member["memberId"];
@@ -21,7 +17,10 @@ class AdminNotifier {
 
   async notifyAboutNewMember() {
     const { adminMember, msg } = this;
-    await wsBackend.sendMsgToWs(adminMember.connectionId, msg);
+    await wsBackendForRoomWsAuthorizer.sendMsgToWs(
+      adminMember.connectionId,
+      msg
+    );
   }
 
   private get adminMember(): ConnectedRoomMember {

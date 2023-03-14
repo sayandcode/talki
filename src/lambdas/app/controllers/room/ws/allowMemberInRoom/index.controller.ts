@@ -5,7 +5,6 @@ import {
   getIsMemberConnected,
 } from "models/Room/schemas/member/helperFns";
 import RoomWsAllowMemberInRoomBodyValidator from "./_utils/bodyValidator";
-import askOtherMembersToConnectToNewMember from "./_utils/askOtherMembersToConnectToNewMember";
 import processAdminDecisionOnNewMember from "./_utils/processAdminDecisionOnNewMember";
 import makeRoomWsController from "../_utils/makeRoomWsController";
 
@@ -54,10 +53,6 @@ function makeRoomWsAllowMemberInRoomController(
         requestedRoom,
         newMember,
       });
-
-      // ask other members to connect to new member
-      if (isNewMemberAllowedInRoomByAdmin)
-        await askOtherMembersToConnectToNewMember(requestedRoom, newMemberId);
 
       res.status(200).send("Member allowed, and prompts sent");
     }

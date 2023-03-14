@@ -4,6 +4,7 @@ import {
   generateRoomMemberData,
   getIsMemberAllowed,
   getIsMemberConnected,
+  getMemberIdFromUserData,
 } from "./member/helperFns";
 import roomMemberSchema, {
   AllowedRoomMember,
@@ -42,7 +43,9 @@ const roomSchema = new Schema(
        */
       verifyNonce(memberId: MemberId, nonce: Nonce) {
         const requestedMember = this.members.get(memberId);
-        const isNonceSame = requestedMember && requestedMember.nonce === nonce;
+        if (!requestedMember)
+          throw new Error("Cannot verify nonce for invalid member");
+        const isNonceSame = requestedMember.nonce === nonce;
         return isNonceSame;
       },
 
@@ -85,6 +88,26 @@ const roomSchema = new Schema(
           if (getIsMemberAllowed(member)) allowedMembers.push(member);
         }
         return allowedMembers;
+      },
+
+      getIsMemberAdded(userData: SessionData["userData"]) {
+        const memberId = getMemberIdFromUserData(userData);
+        return this.members.has(memberId);
+      },
+
+      async refreshMember(userData: SessionData["userData"]) {
+        const memberId = getMemberIdFromUserData(userData);
+        const existingMember = this.members.get(memberId);
+        if (!existingMember)
+          throw new Error("Member does not exist, so cannot be refreshed");
+
+        const refreshedMemberData = generateRoomMemberData(
+          userData,
+          existingMember.isAllowedInRoom
+        );
+        this.members.set(memberId, refreshedMemberData);
+        await this.save();
+        return refreshedMemberData;
       },
     },
   }

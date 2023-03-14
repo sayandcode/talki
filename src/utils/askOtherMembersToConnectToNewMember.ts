@@ -1,19 +1,24 @@
-import wsBackendForApp from "@appLambda/utils/wsBackend";
 import { RoomDocument } from "models/Room/index.model";
 import { RoomMember } from "models/Room/schemas/member/index.schema";
+import WsBackend from "./WsBackend";
 
 type MemberId = RoomMember["memberId"];
 type ConnectionId = NonNullable<RoomMember["connectionId"]>;
 
 async function askOtherMembersToConnectToNewMember(
   requestedRoom: RoomDocument,
-  newMemberId: MemberId
+  newMemberId: MemberId,
+  wsBackend: WsBackend
 ) {
   const otherMembersConnectionIds = getOtherMembersConnectionIds(
     requestedRoom,
     newMemberId
   );
-  await sendPromptsToOpenNewConnection(otherMembersConnectionIds, newMemberId);
+  await sendPromptsToOpenNewConnection(
+    otherMembersConnectionIds,
+    newMemberId,
+    wsBackend
+  );
 }
 
 function getOtherMembersConnectionIds(
@@ -29,13 +34,14 @@ function getOtherMembersConnectionIds(
 
 async function sendPromptsToOpenNewConnection(
   connectionIds: ConnectionId[],
-  newMemberId: RoomMember["memberId"]
+  newMemberId: RoomMember["memberId"],
+  wsBackend: WsBackend
 ) {
   const connectionToNewConnectionPrompt = async (
     connectionId: ConnectionId
   ) => {
     const msg = { action: "promptSdp", payload: { newMemberId } };
-    await wsBackendForApp.sendMsgToWs(connectionId, msg);
+    await wsBackend.sendMsgToWs(connectionId, msg);
   };
   const newConnectionPrompts = connectionIds.map(
     connectionToNewConnectionPrompt
