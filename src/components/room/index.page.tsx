@@ -64,9 +64,6 @@ function RoomPage() {
         <div class="flex flex-row items-center justify-center sm:justify-between px-2 gap-x-4 z-[1]">
           <SelfVideo stream={localStreamManager.stream} />
           <div class="pt-4">
-            <h1 class="text-4xl text-center font-bold mb-4 px-2">
-              My chat room
-            </h1>
             <RoomInfoHub
               roomId={roomData?.roomId}
               expireAt={roomData?.expireAt}
